@@ -3,78 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rafid's Cloud Gallery</title>
+    <title>Created by Rafid Ahammed</title>
     <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #6C5CE7; --accent: #00CEC9; --bg: #F8F9FE; }
         body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; min-height: 100vh; }
-        
         .container { display: flex; flex-direction: column; align-items: center; padding: 20px; }
         
-        /* Password Section */
+        /* Login Box */
         #login-box { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; margin-top: 100px; width: 300px; }
         input { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px; margin-bottom: 20px; outline: none; box-sizing: border-box; }
         
-        /* Gallery Section */
-        #gallery-wrapper { display: none; width: 100%; max-width: 1200px; text-align: center; }
+        /* Gallery Layout */
+        #gallery-wrapper { display: none; width: 100%; max-width: 1200px; text-align: center; animation: fadeIn 0.8s ease; }
         .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 20px; }
-        .card { background: white; padding: 10px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        
+        /* Cards & Buttons */
+        .card { background: white; padding: 10px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
         .card img, .card video { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; }
         
         .btn { padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; transition: 0.3s; }
         .btn-main { background: var(--primary); color: white; width: 100%; }
-        .btn-add { background: var(--accent); color: white; margin-bottom: 20px; border-radius: 50px; }
-        .dl-btn { background: #eee; color: #333; text-decoration: none; padding: 5px 10px; font-size: 12px; border-radius: 5px; display: inline-block; margin-top: 5px; }
+        .btn-add { background: var(--accent); color: white; margin-bottom: 30px; border-radius: 50px; font-size: 16px; box-shadow: 0 4px 15px rgba(0,206,201,0.2); }
+        .dl-btn { background: #F1F2F6; color: #333; text-decoration: none; padding: 8px 15px; font-size: 13px; border-radius: 8px; display: inline-block; margin-top: 10px; font-weight: 600; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="login-box">
-        <h2 style="color: var(--primary);">Rafid's Cloud</h2>
-        <input type="password" id="pass" placeholder="পাসওয়ার্ড দিন">
+        <h2 style="color: var(--primary);">Secure Gallery</h2>
+        <input type="password" id="pass" placeholder="Enter Password">
         <button class="btn btn-main" onclick="login()">Unlock</button>
     </div>
 
     <div id="gallery-wrapper">
-        <h1>Hello, Rafid! 👋</h1>
+        <h1 style="color: #2D3436; font-weight: 600; margin-bottom: 5px;">Created by Rafid Ahammed</h1>
+        <p style="color: #636E72; margin-bottom: 30px;">Your personal cloud storage</p>
         <button id="upload_widget" class="btn btn-add">+ Upload Photo/Video</button>
         <div class="photo-grid" id="grid"></div>
     </div>
 </div>
 
 <script>
-    const CLOUD_NAME = 'dzakfamzi'; 
-    const UPLOAD_PRESET = 'my_gallery';
+    const CLOUD_NAME = 'dzakfamzi'; //
+    const UPLOAD_PRESET = 'my_gallery'; //
     const PASS = 'FF4810026';
-    const TAG = 'rafid_personal'; // এই ট্যাগ দিয়ে সব ফাইল খুঁজে বের করা হবে
+    const TAG = 'rafid_personal';
+
+    // ১. রিফ্রেশ করলে পাসওয়ার্ড মনে রাখার মেকানিজম
+    window.onload = function() {
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            showGallery();
+        }
+    };
 
     function login() {
         if(document.getElementById('pass').value === PASS) {
-            document.getElementById('login-box').style.display = 'none';
-            document.getElementById('gallery-wrapper').style.display = 'block';
-            loadGallery();
-        } else { alert("ভুল পাসওয়ার্ড!"); }
+            localStorage.setItem('isLoggedIn', 'true');
+            showGallery();
+        } else { alert("Incorrect Password!"); }
     }
 
+    function showGallery() {
+        document.getElementById('login-box').style.display = 'none';
+        document.getElementById('gallery-wrapper').style.display = 'block';
+        loadGallery();
+    }
+
+    // ২. আনলিমিটেড আপলোড উইজেট (ফটো ও ভিডিও)
     var myWidget = cloudinary.createUploadWidget({
         cloudName: CLOUD_NAME, 
         uploadPreset: UPLOAD_PRESET,
-        tags: [TAG], // আপলোড করার সময় অটো ট্যাগ লেগে যাবে
-        sources: ['local', 'camera']
+        tags: [TAG], // ট্যাগিং সিস্টেম যাতে অন্য ডিভাইসেও দেখা যায়
+        sources: ['local', 'camera', 'url'],
+        multiple: true // একসাথে অনেক ছবি আপলোড করা যাবে
     }, (error, result) => { 
         if (!error && result && result.event === "success") { 
-            setTimeout(loadGallery, 2000); // ২ সেকেন্ড পর গ্যালারি রিফ্রেশ হবে
+            setTimeout(loadGallery, 2000); 
         }
     });
 
     document.getElementById("upload_widget").addEventListener("click", () => myWidget.open());
 
-    // এই ফাংশনটি যেকোনো ডিভাইস থেকে ছবিগুলো খুঁজে আনবে
+    // ৩. ক্লাউডিনারি থেকে ছবি ও ভিডিও লোড করা
     function loadGallery() {
         const grid = document.getElementById('grid');
-        // ক্লাউডিনারি থেকে ট্যাগ অনুযায়ী লিস্ট আনা
         fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${TAG}.json`)
         .then(res => res.json())
         .then(data => {
@@ -82,16 +100,20 @@
                 const url = `https://res.cloudinary.com/${CLOUD_NAME}/${file.type}/upload/v${file.version}/${file.public_id}.${file.format}`;
                 return `
                     <div class="card">
-                        ${file.format === 'mp4' ? `<video src="${url}" controls></video>` : `<img src="${url}">`}
+                        ${file.format === 'mp4' || file.type === 'video' ? 
+                          `<video src="${url}" controls></video>` : 
+                          `<img src="${url}" onerror="this.src='https://via.placeholder.com/250?text=Image+Not+Found'">`}
+                        <br>
                         <a href="${url}" download target="_blank" class="dl-btn">Download</a>
                     </div>
                 `;
             }).join('');
         })
         .catch(err => {
-            grid.innerHTML = "<p>এখনো কোনো ছবি নেই। আপলোড শুরু করুন!</p>";
+            grid.innerHTML = "<p style='grid-column: 1/-1; color: #B2BEC3;'>No files found. Try uploading a new one!</p>";
         });
     }
 </script>
 </body>
 </html>
+
