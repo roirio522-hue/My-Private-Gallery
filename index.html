@@ -3,29 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>রাফিদ আহমেদ - আনলিমিটেড ড্রাইভ গ্যালারি</title>
+    <title>Rafid Ahammed Ultimate Gallery</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        body { background-color: #1a1c22; color: #e2e8f0; }
         .circle-container { position: relative; width: 120px; height: 120px; }
-        .circle-bg { fill: none; stroke: #f1f5f9; stroke-width: 8; }
+        .circle-bg { fill: none; stroke: #2d3748; stroke-width: 8; }
         .circle-progress { fill: none; stroke: #22c55e; stroke-width: 8; stroke-linecap: round; stroke-dasharray: 283; stroke-dashoffset: 283; transition: stroke-dashoffset 0.5s ease; transform: rotate(-90deg); transform-origin: 50% 50%; }
         .loader { border-top-color: #22c55e; animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col font-sans">
 
     <div class="flex-grow max-w-6xl mx-auto px-4 py-10 w-full">
         <header class="text-center mb-10">
-            <h1 class="text-4xl font-extrabold text-slate-800 tracking-tight">ড্রাইভ গ্যালারি</h1>
-            <p class="text-slate-500 mt-2 font-medium italic">Unlimited Cloud Storage by Rafid</p>
+            <h1 class="text-4xl font-extrabold text-white tracking-tight italic uppercase">রাফিদ আহমেদ গ্যালারি</h1>
+            <p class="text-gray-400 mt-2 font-medium">আপনার নিরাপদ এবং ব্যক্তিগত ড্রাইভ স্টোরেজ</p>
         </header>
 
-        <div class="max-w-md mx-auto mb-12">
-            <div class="bg-white shadow-2xl rounded-3xl p-8 border border-slate-100 text-center">
+        <div class="max-w-md mx-auto mb-12 text-center">
+            <div class="bg-[#2d333b] shadow-2xl rounded-3xl p-8 border border-gray-700">
                 <input type="file" id="fileInput" class="hidden" accept="image/*" multiple>
-                <button onclick="document.getElementById('fileInput').click()" id="uploadBtn" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-5 px-8 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-3">
-                    আনলিমিটেড ছবি আপলোড দিন
+                <button onclick="document.getElementById('fileInput').click()" id="uploadBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 px-8 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-3 text-lg">
+                    সিলেক্ট ইমেজ (Select Image)
                 </button>
 
                 <div id="progressUI" class="hidden mt-8 flex flex-col items-center">
@@ -34,9 +35,9 @@
                             <circle class="circle-bg" cx="50" cy="50" r="45"></circle>
                             <circle id="circleBar" class="circle-progress" cx="50" cy="50" r="45"></circle>
                         </svg>
-                        <div id="percentValue" class="absolute inset-0 flex items-center justify-center font-black text-2xl text-slate-800">0%</div>
+                        <div id="percentValue" class="absolute inset-0 flex items-center justify-center font-black text-2xl text-white">0%</div>
                     </div>
-                    <p id="fileCountText" class="mt-4 text-sm font-bold text-green-600">প্রসেসিং হচ্ছে...</p>
+                    <p id="fileCountText" class="mt-4 text-sm font-bold text-green-400 italic">প্রসেসিং হচ্ছে...</p>
                 </div>
             </div>
         </div>
@@ -44,15 +45,15 @@
         <div id="gallery" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"></div>
 
         <div id="loading" class="text-center py-20">
-            <div class="inline-block loader rounded-full border-4 border-slate-200 h-12 w-12 mb-4"></div>
-            <p class="text-slate-400 font-medium">ছবি লোড হচ্ছে...</p>
+            <div class="inline-block loader rounded-full border-4 border-gray-700 h-12 w-12 mb-4"></div>
+            <p class="text-gray-500 font-medium tracking-widest uppercase text-xs">ছবিগুলো লোড হচ্ছে...</p>
         </div>
     </div>
 
-    <footer class="bg-white border-t border-slate-200 py-10 text-center mt-auto">
-        <div class="container mx-auto">
-            <p class="text-slate-700 font-bold text-lg">© 2024 সর্বস্বত্ব সংরক্ষিত</p>
-            <p class="text-slate-500 font-medium mt-1 uppercase tracking-widest text-sm">ক্রিয়েট পাই রাফিদ আহমেদ</p>
+    <footer class="bg-[#161b22] border-t border-gray-800 py-10 text-center">
+        <div class="container mx-auto px-4">
+            <p class="text-gray-300 font-bold text-lg">© 2024 সর্বস্বত্ব সংরক্ষিত</p>
+            <p class="text-gray-500 font-medium mt-1 uppercase tracking-widest text-sm italic">ক্রিয়েট পাই রাফিদ আহমেদ</p>
         </div>
     </footer>
 
@@ -72,26 +73,38 @@
 
                 data.forEach(file => {
                     const card = document.createElement('div');
-                    card.className = "bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-100 hover:shadow-2xl transition duration-500 group";
+                    card.className = "bg-[#22272e] rounded-2xl shadow-lg overflow-hidden border border-gray-800 hover:border-gray-500 transition duration-300 group";
                     
-                    // প্রিভিউ ফিক্স লিঙ্ক
+                    // উন্নত প্রিভিউ লিঙ্ক
                     const thumbUrl = `https://lh3.googleusercontent.com/u/0/d/${file.id}`;
                     
                     card.innerHTML = `
-                        <div class="h-56 bg-slate-100 overflow-hidden relative">
-                            <img src="${thumbUrl}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" 
-                                 onerror="this.src='https://via.placeholder.com/400x300?text=Wait+for+Sync...'">
+                        <div class="h-56 bg-gray-900 overflow-hidden relative">
+                            <img src="${thumbUrl}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" 
+                                 onerror="this.src='https://via.placeholder.com/400x300/1a1c22/ffffff?text=Loading...'">
                         </div>
                         <div class="p-5">
-                            <p class="text-[10px] font-black text-slate-400 truncate mb-4 uppercase tracking-widest">${file.name}</p>
-                            <a href="https://drive.google.com/uc?export=download&id=${file.id}" target="_blank" class="block w-full bg-green-500 hover:bg-green-600 text-white text-center py-3.5 rounded-xl text-xs font-black transition-all">
+                            <p class="text-[10px] font-bold text-gray-500 truncate mb-4 uppercase tracking-wider">${file.name}</p>
+                            <button onclick="downloadImage('${file.id}', '${file.name}')" class="block w-full bg-green-600 hover:bg-green-500 text-white text-center py-3.5 rounded-xl text-xs font-black transition-all shadow-md">
                                 ORIGINAL DOWNLOAD
-                            </a>
+                            </button>
                         </div>
                     `;
                     gallery.appendChild(card);
                 });
             } catch (error) { loader.classList.add('hidden'); }
+        }
+
+        // ডাউনলোড ফাংশন ফিক্স
+        function downloadImage(fileId, fileName) {
+            const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.setAttribute('download', fileName);
+            link.setAttribute('target', '_blank');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         document.getElementById('fileInput').addEventListener('change', async function(e) {
@@ -109,7 +122,7 @@
             uploadBtn.style.opacity = '0.5';
 
             let uploadedCount = 0;
-            const chunkSize = 3; 
+            const chunkSize = 2; // ডাউনলোড স্পিড ও স্টাবিলিটির জন্য ২ করা হয়েছে
 
             for (let i = 0; i < files.length; i += chunkSize) {
                 const chunk = files.slice(i, i + chunkSize);
@@ -119,12 +132,12 @@
                     let prog = (uploadedCount / files.length) * 100;
                     circleBar.style.strokeDashoffset = 283 - (283 * prog) / 100;
                     percentValue.innerText = Math.round(prog) + "%";
-                    fileCountText.innerText = `আপলোড: ${uploadedCount} / ${files.length}`;
+                    fileCountText.innerText = `সফল আপলোড: ${uploadedCount} / ${files.length}`;
                 }));
             }
 
             setTimeout(() => {
-                alert("আপনার সবগুলো ছবি সফলভাবে আপলোড হয়েছে!");
+                alert("সব ছবি আপলোড সম্পন্ন হয়েছে!");
                 progressUI.classList.add('hidden');
                 uploadBtn.disabled = false;
                 uploadBtn.style.opacity = '1';
