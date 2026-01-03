@@ -10,30 +10,32 @@
 
     <div class="max-w-6xl mx-auto px-4 py-10">
         <header class="text-center mb-10">
-            <h1 class="text-3xl font-bold text-gray-800">গুগল ড্রাইভ গ্যালারি</h1>
-            <p class="text-gray-500">আপনার ব্যক্তিগত স্টোরেজ</p>
+            <h1 class="text-3xl font-bold text-gray-800 tracking-tight">ড্রাইভ গ্যালারি</h1>
+            <p class="text-gray-500 mt-2">ছবিগুলো সরাসরি গুগল ড্রাইভ থেকে দেখা যাচ্ছে</p>
         </header>
 
-        <div class="flex justify-center mb-8">
-            <input type="file" id="fileInput" class="hidden" accept="image/*">
-            <button onclick="document.getElementById('fileInput').click()" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-bold shadow-lg transition">
-                নতুন ছবি যোগ করুন
-            </button>
+        <div class="flex justify-center mb-12">
+            <div class="bg-white shadow-lg rounded-xl p-4 flex items-center gap-4 border border-gray-100">
+                <input type="file" id="fileInput" class="hidden" accept="image/*">
+                <button onclick="document.getElementById('fileInput').click()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition">
+                    + ছবি আপলোড
+                </button>
+                <div id="uploadStatus" class="hidden text-blue-600 font-medium animate-pulse">আপলোড হচ্ছে...</div>
+            </div>
         </div>
 
-        <div id="gallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div id="gallery" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             </div>
 
-        <div id="loading" class="text-center py-20 hidden">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
-            <p class="mt-4 text-gray-600">ছবিগুলো আনা হচ্ছে...</p>
+        <div id="loading" class="text-center py-20">
+            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-blue-500 border-t-transparent"></div>
+            <p class="mt-4 text-gray-500">ড্রাইভ থেকে ছবি আনা হচ্ছে...</p>
         </div>
     </div>
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxL8IC4rQBBa4dclcvGAgE1sfQbJzi4qPZyNqwjeElGOjmCKzJX3txJ6u3CesQ_u9-8ww/exec";
 
-        // ছবি লোড করার ফাংশন
         async function loadGallery() {
             const gallery = document.getElementById('gallery');
             const loader = document.getElementById('loading');
@@ -46,54 +48,51 @@
                 loader.classList.add('hidden');
 
                 if (data.length === 0) {
-                    gallery.innerHTML = '<p class="col-span-full text-center text-gray-400">কোনো ছবি নেই।</p>';
+                    gallery.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">গ্যালারি খালি। একটি ছবি আপলোড করুন!</p>';
                     return;
                 }
 
                 data.forEach(file => {
                     const card = document.createElement('div');
-                    card.className = "bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition border border-gray-100";
+                    card.className = "bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300";
+                    
+                    // গুগল ড্রাইভের লিঙ্ক প্রিভিউ করার জন্য thumbnail URL তৈরি
+                    const previewUrl = `https://lh3.googleusercontent.com/u/0/d/${file.id}`;
+                    
                     card.innerHTML = `
-                        <div class="h-48 overflow-hidden bg-gray-200">
-                            <img src="${file.url}" class="w-full h-full object-cover" loading="lazy" onerror="this.src='https://via.placeholder.com/300x200?text=No+Preview'">
+                        <div class="h-44 bg-gray-100 overflow-hidden">
+                            <img src="${previewUrl}" class="w-full h-full object-cover hover:scale-105 transition duration-500" 
+                                 onerror="this.src='https://via.placeholder.com/300x200?text=No+Preview'">
                         </div>
-                        <div class="p-4">
-                            <p class="text-sm font-medium text-gray-700 truncate mb-3">${file.name}</p>
-                            <div class="flex gap-2">
-                                <a href="${file.url}" target="_blank" class="flex-1 bg-green-500 hover:bg-green-600 text-white text-center py-2 rounded text-sm font-bold">ডাউনলোড</a>
-                                <button onclick="alert('গুগল ড্রাইভ থেকে সরাসরি ডিলিট করতে আপনার ড্রাইভ অ্যাপ ব্যবহার করুন।')" class="bg-red-50 text-red-500 px-3 py-2 rounded hover:bg-red-100">
-                                    🗑️
-                                </button>
-                            </div>
+                        <div class="p-3">
+                            <p class="text-xs font-semibold text-gray-600 truncate mb-3">${file.name}</p>
+                            <a href="${file.url}" target="_blank" class="block w-full bg-slate-800 hover:bg-black text-white text-center py-2 rounded-lg text-xs font-bold transition">
+                                ডাউনলোড / দেখুন
+                            </a>
                         </div>
                     `;
                     gallery.appendChild(card);
                 });
             } catch (error) {
                 loader.classList.add('hidden');
-                alert("গ্যালারি লোড করতে সমস্যা হচ্ছে।");
+                console.error("Gallery Error:", error);
             }
         }
 
-        // ছবি আপলোড ফাংশন
         document.getElementById('fileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
-
+            const status = document.getElementById('uploadStatus');
+            status.classList.remove('hidden');
             const reader = new FileReader();
             reader.onload = function() {
                 const base64 = reader.result.split(',')[1];
                 const data = { base64: base64, mimetype: file.type, filename: file.name };
-
-                alert("আপলোড শুরু হয়েছে, দয়া করে অপেক্ষা করুন...");
-                
                 fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(data) })
                 .then(res => res.json())
                 .then(res => {
-                    if(res.success) {
-                        alert("আপলোড সফল!");
-                        loadGallery();
-                    }
+                    status.classList.add('hidden');
+                    if(res.success) { alert("সফলভাবে আপলোড হয়েছে!"); loadGallery(); }
                 });
             };
             reader.readAsDataURL(file);
