@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>রাফিদ আহমেদ - ড্রাইভ গ্যালারি</title>
+    <title>রাফিদ আহমেদ - হাই-স্পিড ড্রাইভ গ্যালারি</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .circle-container { position: relative; width: 100px; height: 100px; }
-        .circle-bg { fill: none; stroke: #e2e8f0; stroke-width: 8; }
-        .circle-progress { fill: none; stroke: #22c55e; stroke-width: 8; stroke-linecap: round; stroke-dasharray: 283; stroke-dashoffset: 283; transition: stroke-dashoffset 0.3s ease; transform: rotate(-90deg); transform-origin: 50% 50%; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .circle-container { position: relative; width: 120px; height: 120px; }
+        .circle-bg { fill: none; stroke: #f1f5f9; stroke-width: 8; }
+        .circle-progress { fill: none; stroke: #22c55e; stroke-width: 8; stroke-linecap: round; stroke-dasharray: 283; stroke-dashoffset: 283; transition: stroke-dashoffset 0.5s ease; transform: rotate(-90deg); transform-origin: 50% 50%; }
         .loader { border-top-color: #22c55e; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen flex flex-col">
@@ -18,14 +18,17 @@
     <div class="flex-grow max-w-6xl mx-auto px-4 py-10 w-full">
         <header class="text-center mb-10">
             <h1 class="text-4xl font-extrabold text-slate-800 tracking-tight">ড্রাইভ গ্যালারি</h1>
-            <p class="text-slate-500 mt-2 font-medium">আপনার পার্সোনাল ক্লাউড স্টোরেজ</p>
+            <p class="text-slate-500 mt-2 font-medium italic">Rafid's High-Speed Cloud Storage</p>
         </header>
 
         <div class="max-w-md mx-auto mb-12">
             <div class="bg-white shadow-2xl rounded-3xl p-8 border border-slate-100 text-center">
                 <input type="file" id="fileInput" class="hidden" accept="image/*" multiple>
-                <button onclick="document.getElementById('fileInput').click()" id="uploadBtn" class="w-full bg-slate-800 hover:bg-black text-white font-bold py-4 px-8 rounded-2xl transition shadow-lg flex items-center justify-center gap-3">
-                    + একসাথে অনেক ছবি যোগ করুন
+                <button onclick="document.getElementById('fileInput').click()" id="uploadBtn" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-5 px-8 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    একসাথে সব ছবি আপলোড দিন
                 </button>
 
                 <div id="progressUI" class="hidden mt-8 flex flex-col items-center">
@@ -34,9 +37,12 @@
                             <circle class="circle-bg" cx="50" cy="50" r="45"></circle>
                             <circle id="circleBar" class="circle-progress" cx="50" cy="50" r="45"></circle>
                         </svg>
-                        <div id="percentValue" class="absolute inset-0 flex items-center justify-center font-bold text-slate-700">0%</div>
+                        <div id="percentValue" class="absolute inset-0 flex items-center justify-center font-black text-2xl text-slate-800">0%</div>
                     </div>
-                    <p id="fileCountText" class="mt-4 text-sm font-bold text-green-600 italic">প্রসেসিং হচ্ছে...</p>
+                    <div class="mt-4">
+                        <p id="fileCountText" class="text-sm font-bold text-green-600 tracking-wide">প্রস্তুত হচ্ছে...</p>
+                        <p class="text-[10px] text-slate-400 mt-1 uppercase font-bold">একসাথে ৩টি করে ফাইল আপলোড হচ্ছে</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -49,8 +55,8 @@
         </div>
     </div>
 
-    <footer class="bg-white border-t border-slate-200 py-6 text-center">
-        <p class="text-slate-600 font-medium italic">© 2024. Created by Rafid Ahmed | All Rights Reserved</p>
+    <footer class="bg-white border-t border-slate-200 py-8 text-center mt-10">
+        <p class="text-slate-600 font-semibold tracking-wide">© 2024. Created by Rafid Ahmed | All Rights Reserved</p>
     </footer>
 
     <script>
@@ -70,17 +76,18 @@
                 data.forEach(file => {
                     const card = document.createElement('div');
                     card.className = "bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-100 hover:shadow-2xl transition duration-500 group";
-                    const imageUrl = `https://lh3.googleusercontent.com/u/0/d/$${file.id}`;
+                    const imageUrl = `https://lh3.googleusercontent.com/u/0/d/${file.id}`;
                     
                     card.innerHTML = `
-                        <div class="h-52 bg-slate-50 overflow-hidden">
+                        <div class="h-56 bg-slate-50 overflow-hidden relative">
                             <img src="${imageUrl}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" 
-                                 onerror="this.src='https://via.placeholder.com/400x300?text=Wait...'">
+                                 onerror="this.src='https://via.placeholder.com/400x300?text=Please+Wait...'">
+                            <div class="absolute top-2 right-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition">ORIGINAL</div>
                         </div>
-                        <div class="p-4">
-                            <p class="text-[10px] font-black text-slate-400 truncate mb-3 uppercase tracking-tighter">${file.name}</p>
-                            <a href="https://drive.google.com/uc?export=download&id=${file.id}" target="_blank" class="block w-full bg-green-500 hover:bg-green-600 text-white text-center py-3 rounded-xl text-xs font-bold transition shadow-sm">
-                                ORIGINAL SIZE DOWNLOAD
+                        <div class="p-5">
+                            <p class="text-[10px] font-black text-slate-400 truncate mb-4 uppercase tracking-widest">${file.name}</p>
+                            <a href="https://drive.google.com/uc?export=download&id=${file.id}" target="_blank" class="block w-full bg-green-500 hover:bg-green-600 text-white text-center py-3.5 rounded-xl text-xs font-black transition-all shadow-md transform active:scale-95">
+                                ORIGINAL DOWNLOAD
                             </a>
                         </div>
                     `;
@@ -90,7 +97,7 @@
         }
 
         document.getElementById('fileInput').addEventListener('change', async function(e) {
-            const files = e.target.files;
+            const files = Array.from(e.target.files);
             if (files.length === 0) return;
 
             const progressUI = document.getElementById('progressUI');
@@ -103,25 +110,35 @@
             uploadBtn.disabled = true;
             uploadBtn.style.opacity = '0.5';
 
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                fileCountText.innerText = `আপলোড হচ্ছে: ${i + 1} / ${files.length}`;
-                
-                // সার্কেল এনিমেশন আপডেট
-                let prog = ((i + 1) / files.length) * 100;
-                let offset = 283 - (283 * prog) / 100;
-                circleBar.style.strokeDashoffset = offset;
-                percentValue.innerText = Math.round(prog) + "%";
+            let uploadedCount = 0;
+            const totalFiles = files.length;
 
-                await uploadFile(file);
+            // ৩টি করে ফাইল প্যারালাল আপলোড করার লজিক
+            const chunkSize = 3; 
+            for (let i = 0; i < files.length; i += chunkSize) {
+                const chunk = files.slice(i, i + chunkSize);
+                
+                await Promise.all(chunk.map(async (file) => {
+                    await uploadFile(file);
+                    uploadedCount++;
+                    
+                    // সার্কেল এবং পারসেন্টেজ আপডেট
+                    let prog = (uploadedCount / totalFiles) * 100;
+                    let offset = 283 - (283 * prog) / 100;
+                    circleBar.style.strokeDashoffset = offset;
+                    percentValue.innerText = Math.round(prog) + "%";
+                    fileCountText.innerText = `সফল আপলোড: ${uploadedCount} / ${totalFiles}`;
+                }));
             }
 
-            alert("সবগুলো ছবি সফলভাবে আপলোড হয়েছে!");
-            progressUI.classList.add('hidden');
-            uploadBtn.disabled = false;
-            uploadBtn.style.opacity = '1';
-            circleBar.style.strokeDashoffset = 283;
-            loadGallery();
+            setTimeout(() => {
+                alert(`সবগুলো (${totalFiles}) ছবি সফলভাবে আপলোড হয়েছে!`);
+                progressUI.classList.add('hidden');
+                uploadBtn.disabled = false;
+                uploadBtn.style.opacity = '1';
+                circleBar.style.strokeDashoffset = 283;
+                loadGallery();
+            }, 500);
         });
 
         function uploadFile(file) {
