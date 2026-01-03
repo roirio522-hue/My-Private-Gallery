@@ -9,6 +9,8 @@
     <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/gallery.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { background-color: #1a1c22; color: #e2e8f0; font-family: 'Inter', sans-serif; }
@@ -33,9 +35,37 @@
         .loader { border-top-color: #22c55e; animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         #mainContent { display: none; }
+
+        /* Sidebar & Menu Animations */
+        #sidebar { transition: left 0.3s ease-in-out; }
+        .menu-link { display: flex; align-items: center; gap: 12px; transition: 0.2s; }
+        .menu-link:hover { background-color: #3b82f6; color: white; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
+
+    <div id="sidebar" class="fixed left-[-250px] top-0 w-[250px] h-full bg-[#1a1c22] z-[1000] border-r border-gray-800">
+        <div class="p-6 text-white font-black border-b border-gray-800 uppercase flex justify-between items-center">
+            Menu
+            <button onclick="closeSidebar()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <ul class="text-gray-400 font-bold p-4">
+            <li class="mb-2">
+                <a href="index.html" class="menu-link py-3 px-4 rounded-lg"><i class="fa-solid fa-image text-blue-500"></i> Gallery (Images)</a>
+            </li>
+            <li class="mb-2">
+                <a href="audio.html" class="menu-link py-3 px-4 rounded-lg"><i class="fa-solid fa-music text-yellow-500"></i> Audio Store</a>
+            </li>
+            <li class="mb-2">
+                <a href="video.html" class="menu-link py-3 px-4 rounded-lg"><i class="fa-solid fa-play text-red-500"></i> Video Store</a>
+            </li>
+            <li class="mb-2">
+                <a href="files.html" class="menu-link py-3 px-4 rounded-lg"><i class="fa-solid fa-file-invoice text-green-500"></i> Documents</a>
+            </li>
+        </ul>
+    </div>
+
+    <div id="overlay" onclick="closeSidebar()" class="fixed inset-0 bg-black/60 hidden z-[999]"></div>
 
     <div id="loginSection" class="flex-grow flex items-center justify-center px-4">
         <div class="bg-[#2d333b] p-8 rounded-3xl shadow-2xl border border-gray-700 w-full max-w-sm text-center">
@@ -47,7 +77,11 @@
         </div>
     </div>
 
-    <div id="mainContent">
+    <div id="mainContent" class="relative">
+        <button onclick="openSidebar()" class="fixed left-5 top-5 z-[500] bg-gray-800 p-3 rounded-xl text-white hover:bg-gray-700 transition-all border border-gray-700">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
         <div class="max-w-6xl mx-auto px-4 py-10 w-full text-center">
             <header class="mb-10 flex flex-col items-center">
                 <img src="https://img.icons8.com/fluency/96/gallery.png" class="h-16 w-16 mb-2" alt="Logo">
@@ -95,6 +129,17 @@
     <script>
         const CORRECT_PASSWORD = "FF4810026RaFiD#"; 
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxL8IC4rQBBa4dclcvGAgE1sfQbJzi4qPZyNqwjeElGOjmCKzJX3txJ6u3CesQ_u9-8ww/exec";
+
+        // Sidebar Control Functions
+        function openSidebar() {
+            document.getElementById('sidebar').style.left = '0';
+            document.getElementById('overlay').classList.remove('hidden');
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').style.left = '-250px';
+            document.getElementById('overlay').classList.add('hidden');
+        }
 
         function checkPassword() {
             if (document.getElementById('passInput').value === CORRECT_PASSWORD) {
