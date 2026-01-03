@@ -3,24 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>আমার ক্লাউড গ্যালারি</title>
+    <title>স্মার্ট ড্রাইভ গ্যালারি</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .progress-bar { transition: width 0.4s ease; }
+        .loader { border-top-color: #3b82f6; animation: spinner 1s linear infinite; }
+        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
 <body class="bg-slate-50 min-h-screen">
 
     <div class="max-w-6xl mx-auto px-4 py-10">
         <header class="text-center mb-10">
             <h1 class="text-4xl font-extrabold text-slate-800 tracking-tight">ড্রাইভ গ্যালারি</h1>
-            <p class="text-slate-500 mt-2 font-medium">আপনার ছবিগুলো সরাসরি ড্রাইভ থেকে লোড হচ্ছে</p>
+            <p class="text-slate-500 mt-2 font-medium">আপনার পার্সোনাল ক্লাউড স্টোরেজ</p>
         </header>
 
-        <div class="flex justify-center mb-12">
-            <div class="bg-white shadow-xl rounded-2xl p-4 flex items-center gap-4 border border-slate-100">
+        <div class="max-w-md mx-auto mb-12">
+            <div class="bg-white shadow-2xl rounded-3xl p-6 border border-slate-100">
                 <input type="file" id="fileInput" class="hidden" accept="image/*">
-                <button onclick="document.getElementById('fileInput').click()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition shadow-lg">
-                    + নতুন ছবি যোগ করুন
+                <button onclick="document.getElementById('fileInput').click()" id="uploadBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-2xl transition shadow-lg flex items-center justify-center gap-3">
+                    <span id="btnText">+ ছবি যোগ করুন</span>
                 </button>
-                <div id="uploadStatus" class="hidden text-blue-600 font-bold animate-pulse">আপলোড হচ্ছে...</div>
+
+                <div id="progressContainer" class="hidden mt-6">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-sm font-bold text-blue-600" id="statusLabel">আপলোড হচ্ছে...</span>
+                        <span class="text-sm font-bold text-blue-600" id="percentText">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-3">
+                        <div id="progressBar" class="bg-blue-600 h-3 rounded-full progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -28,14 +42,15 @@
             </div>
 
         <div id="loading" class="text-center py-20">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
-            <p class="mt-4 text-slate-400 font-medium">ড্রাইভ থেকে ছবি আনা হচ্ছে...</p>
+            <div class="inline-block loader rounded-full border-4 border-slate-200 h-12 w-12 mb-4"></div>
+            <p class="text-slate-400 font-medium">গ্যালারি লোড হচ্ছে...</p>
         </div>
     </div>
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxL8IC4rQBBa4dclcvGAgE1sfQbJzi4qPZyNqwjeElGOjmCKzJX3txJ6u3CesQ_u9-8ww/exec";
 
+        // গ্যালারি লোড ফাংশন
         async function loadGallery() {
             const gallery = document.getElementById('gallery');
             const loader = document.getElementById('loading');
@@ -47,52 +62,71 @@
                 const data = await response.json();
                 loader.classList.add('hidden');
 
-                if (data.length === 0) {
-                    gallery.innerHTML = '<p class="col-span-full text-center text-slate-400 py-10">গ্যালারি খালি। একটি ছবি আপলোড করুন!</p>';
-                    return;
-                }
-
                 data.forEach(file => {
                     const card = document.createElement('div');
                     card.className = "bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-100 hover:shadow-2xl transition duration-500 group";
-                    
-                    // এটি গুগল ড্রাইভের ছবি দেখানোর সবথেকে কার্যকরী লিঙ্ক
                     const imageUrl = `https://lh3.googleusercontent.com/u/0/d/${file.id}`;
                     
                     card.innerHTML = `
-                        <div class="h-52 bg-slate-100 overflow-hidden relative">
+                        <div class="h-52 bg-slate-50 overflow-hidden relative">
                             <img src="${imageUrl}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" 
-                                 onerror="this.src='https://via.placeholder.com/400x300?text=Image+Loading...'">
+                                 onerror="this.src='https://via.placeholder.com/400x300?text=Preview+Loading...'">
                         </div>
-                        <div class="p-4 bg-white">
-                            <p class="text-xs font-bold text-slate-500 truncate mb-4 uppercase tracking-wider">${file.name}</p>
-                            <a href="https://drive.google.com/uc?export=download&id=${file.id}" target="_blank" class="block w-full bg-slate-800 hover:bg-black text-white text-center py-3 rounded-xl text-sm font-bold transition">
-                                ডাউনলোড করুন
+                        <div class="p-4">
+                            <p class="text-[10px] font-black text-slate-400 truncate mb-3 uppercase tracking-tighter">${file.name}</p>
+                            <a href="https://drive.google.com/uc?export=download&id=${file.id}" target="_blank" class="block w-full bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 text-center py-3 rounded-xl text-xs font-bold transition">
+                                ডাউনলোড
                             </a>
                         </div>
                     `;
                     gallery.appendChild(card);
                 });
-            } catch (error) {
-                loader.classList.add('hidden');
-                console.error("Gallery Error:", error);
-            }
+            } catch (error) { loader.classList.add('hidden'); }
         }
 
+        // ছবি আপলোড ফাংশন (পারসেন্টেজ সহ)
         document.getElementById('fileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
-            const status = document.getElementById('uploadStatus');
-            status.classList.remove('hidden');
+
+            const container = document.getElementById('progressContainer');
+            const bar = document.getElementById('progressBar');
+            const percentText = document.getElementById('percentText');
+            const btn = document.getElementById('uploadBtn');
+
+            container.classList.remove('hidden');
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                if (progress < 90) {
+                    progress += Math.random() * 10;
+                    if (progress > 90) progress = 90;
+                    bar.style.width = progress + "%";
+                    percentText.innerText = Math.round(progress) + "%";
+                }
+            }, 400);
+
             const reader = new FileReader();
             reader.onload = function() {
                 const base64 = reader.result.split(',')[1];
                 const data = { base64: base64, mimetype: file.type, filename: file.name };
+
                 fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(data) })
                 .then(res => res.json())
                 .then(res => {
-                    status.classList.add('hidden');
-                    if(res.success) { alert("সফলভাবে ড্রাইভে আপলোড হয়েছে!"); loadGallery(); }
+                    clearInterval(interval);
+                    bar.style.width = "100%";
+                    percentText.innerText = "100%";
+                    setTimeout(() => {
+                        alert("সফলভাবে আপলোড হয়েছে!");
+                        container.classList.add('hidden');
+                        bar.style.width = "0%";
+                        btn.disabled = false;
+                        btn.classList.remove('opacity-50');
+                        loadGallery();
+                    }, 500);
                 });
             };
             reader.readAsDataURL(file);
