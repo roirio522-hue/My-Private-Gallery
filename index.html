@@ -1,125 +1,106 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>গুগল ড্রাইভ পার্সোনাল গ্যালারি</title>
+    <title>আমার ক্লাউড গ্যালারি</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .loader { border-top-color: #3b82f6; animation: spinner 1s linear infinite; }
-        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
 </head>
-<body class="bg-slate-50 font-sans min-h-screen">
+<body class="bg-gray-50 min-h-screen">
 
-    <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="max-w-6xl mx-auto px-4 py-10">
         <header class="text-center mb-10">
-            <h1 class="text-4xl font-extrabold text-slate-800 tracking-tight">ড্রাইভ গ্যালারি</h1>
-            <p class="text-slate-500 mt-2">আপনার ছবিগুলো সরাসরি গুগল ড্রাইভে সংরক্ষিত হচ্ছে</p>
+            <h1 class="text-3xl font-bold text-gray-800">গুগল ড্রাইভ গ্যালারি</h1>
+            <p class="text-gray-500">আপনার ব্যক্তিগত স্টোরেজ</p>
         </header>
 
-        <div class="flex justify-center mb-12">
-            <div class="bg-white shadow-xl rounded-2xl p-6 flex items-center gap-4 border border-slate-100">
-                <input type="file" id="fileInput" class="hidden" accept="image/*">
-                <button onclick="document.getElementById('fileInput').click()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                    </svg>
-                    ছবি আপলোড
-                </button>
-                <div id="uploadStatus" class="hidden text-blue-600 font-semibold animate-pulse">প্রসেসিং হচ্ছে...</div>
-            </div>
+        <div class="flex justify-center mb-8">
+            <input type="file" id="fileInput" class="hidden" accept="image/*">
+            <button onclick="document.getElementById('fileInput').click()" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-bold shadow-lg transition">
+                নতুন ছবি যোগ করুন
+            </button>
         </div>
 
-        <div id="gallery" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div id="gallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             </div>
 
-        <div id="loading" class="flex flex-col items-center justify-center my-20">
-            <div class="loader ease-linear rounded-full border-4 border-t-4 border-blue-100 h-16 w-16 mb-4"></div>
-            <p class="text-slate-400">ড্রাইভ থেকে ছবি আনা হচ্ছে...</p>
+        <div id="loading" class="text-center py-20 hidden">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+            <p class="mt-4 text-gray-600">ছবিগুলো আনা হচ্ছে...</p>
         </div>
     </div>
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxL8IC4rQBBa4dclcvGAgE1sfQbJzi4qPZyNqwjeElGOjmCKzJX3txJ6u3CesQ_u9-8ww/exec";
 
-        // ছবি আপলোড
-        document.getElementById('fileInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const status = document.getElementById('uploadStatus');
-            status.classList.remove('hidden');
-
-            const reader = new FileReader();
-            reader.onload = function() {
-                const base64 = reader.result.split(',')[1];
-                const data = {
-                    base64: base64,
-                    mimetype: file.type,
-                    filename: file.name
-                };
-
-                fetch(SCRIPT_URL, {
-                    method: "POST",
-                    body: JSON.stringify(data)
-                })
-                .then(res => res.json())
-                .then(response => {
-                    status.classList.add('hidden');
-                    if(response.success) {
-                        alert("সফলভাবে ড্রাইভে আপলোড হয়েছে!");
-                        loadGallery();
-                    } else {
-                        alert("এরর: " + response.error);
-                    }
-                })
-                .catch(err => {
-                    status.classList.add('hidden');
-                    alert("সংযোগ বিচ্ছিন্ন হয়েছে।");
-                });
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // গ্যালারি লোড
-        function loadGallery() {
+        // ছবি লোড করার ফাংশন
+        async function loadGallery() {
             const gallery = document.getElementById('gallery');
             const loader = document.getElementById('loading');
             gallery.innerHTML = '';
             loader.classList.remove('hidden');
 
-            fetch(SCRIPT_URL)
-            .then(res => res.json())
-            .then(data => {
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
                 loader.classList.add('hidden');
+
                 if (data.length === 0) {
-                    gallery.innerHTML = '<p class="col-span-full text-center text-slate-400 py-10">কোনো ছবি পাওয়া যায়নি। একটি ছবি আপলোড করুন।</p>';
+                    gallery.innerHTML = '<p class="col-span-full text-center text-gray-400">কোনো ছবি নেই।</p>';
                     return;
                 }
+
                 data.forEach(file => {
                     const card = document.createElement('div');
-                    card.className = "bg-white p-3 rounded-2xl shadow-md hover:shadow-2xl transition duration-300 group border border-slate-100";
+                    card.className = "bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition border border-gray-100";
                     card.innerHTML = `
-                        <div class="overflow-hidden rounded-xl bg-slate-100 h-48 mb-3">
-                            <img src="${file.url}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" loading="lazy">
+                        <div class="h-48 overflow-hidden bg-gray-200">
+                            <img src="${file.url}" class="w-full h-full object-cover" loading="lazy" onerror="this.src='https://via.placeholder.com/300x200?text=No+Preview'">
                         </div>
-                        <div class="flex flex-col gap-2">
-                            <p class="text-xs font-medium text-slate-600 truncate px-1">${file.name}</p>
-                            <a href="${file.url}" target="_blank" class="w-full bg-slate-800 hover:bg-black text-white text-center py-2 rounded-lg text-sm font-bold transition">View & Save</a>
+                        <div class="p-4">
+                            <p class="text-sm font-medium text-gray-700 truncate mb-3">${file.name}</p>
+                            <div class="flex gap-2">
+                                <a href="${file.url}" target="_blank" class="flex-1 bg-green-500 hover:bg-green-600 text-white text-center py-2 rounded text-sm font-bold">ডাউনলোড</a>
+                                <button onclick="alert('গুগল ড্রাইভ থেকে সরাসরি ডিলিট করতে আপনার ড্রাইভ অ্যাপ ব্যবহার করুন।')" class="bg-red-50 text-red-500 px-3 py-2 rounded hover:bg-red-100">
+                                    🗑️
+                                </button>
+                            </div>
                         </div>
                     `;
                     gallery.appendChild(card);
                 });
-            })
-            .catch(err => {
+            } catch (error) {
                 loader.classList.add('hidden');
-                console.error("Gallery Error:", err);
-            });
+                alert("গ্যালারি লোড করতে সমস্যা হচ্ছে।");
+            }
         }
+
+        // ছবি আপলোড ফাংশন
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function() {
+                const base64 = reader.result.split(',')[1];
+                const data = { base64: base64, mimetype: file.type, filename: file.name };
+
+                alert("আপলোড শুরু হয়েছে, দয়া করে অপেক্ষা করুন...");
+                
+                fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(data) })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success) {
+                        alert("আপলোড সফল!");
+                        loadGallery();
+                    }
+                });
+            };
+            reader.readAsDataURL(file);
+        });
 
         loadGallery();
     </script>
 </body>
 </html>
+
