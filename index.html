@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="description" content="Ultimate Gallery by Rafid Ahmed - Secure Cloud Storage">
-<meta name="keywords" content="Rafid Ahmed, Ultimate Gallery, Cloud Storage, Rafid Gallery">
-<meta name="author" content="Rafid Ahmed">
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ultimate Gallery by Rafid Ahmed - Secure Cloud Storage">
+    <meta name="keywords" content="Rafid Ahmed, Ultimate Gallery, Rafid Gallery, Image Resizer Pro">
+    <meta name="author" content="Rafid Ahmed">
     <title>ULTIMATE GALLERY | Rafid Ahammed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -18,7 +17,7 @@
         @keyframes scaleUp { 0% { transform: scale(0); } 100% { transform: scale(1); } }
         .loader { border-top-color: #22c55e; animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        #mainContent { display: none; } /* শুরুতে গ্যালারি হাইড থাকবে */
+        #mainContent { display: none; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -85,12 +84,11 @@
     </div>
 
     <script>
-        // আপনার কাঙ্ক্ষিত পাসওয়ার্ড এখানে দিন
+        // আপডেট করা পাসওয়ার্ড
         const CORRECT_PASSWORD = "FF4810026RaFiD#"; 
 
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxL8IC4rQBBa4dclcvGAgE1sfQbJzi4qPZyNqwjeElGOjmCKzJX3txJ6u3CesQ_u9-8ww/exec";
 
-        // পাসওয়ার্ড চেক ফাংশন
         function checkPassword() {
             const input = document.getElementById('passInput').value;
             const error = document.getElementById('errorMsg');
@@ -104,27 +102,23 @@
             }
         }
 
-        // কন্টেন্ট দেখানোর ফাংশন
         function showContent() {
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('mainContent').style.display = 'block';
             loadGallery();
         }
 
-        // লগআউট ফাংশন
         function logout() {
             localStorage.removeItem('gallery_access');
             location.reload();
         }
 
-        // পেজ লোড হওয়ার সময় চেক করবে আগে লগইন করা আছে কি না
         window.onload = function() {
             if (localStorage.getItem('gallery_access') === 'true') {
                 showContent();
             }
         };
 
-        // বাকি গ্যালারি লজিক (পূর্বের কোড অনুযায়ী)
         async function loadGallery() {
             const gallery = document.getElementById('gallery');
             const loader = document.getElementById('loading');
