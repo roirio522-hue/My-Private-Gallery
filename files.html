@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Document Store | Rafid Ahammed</title>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/file.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { background-color: #1a1c22; color: #e2e8f0; font-family: 'Inter', sans-serif; }
+        
+        /* Circular Progress Styles */
+        .circle-wrapper { position: relative; width: 100px; height: 100px; margin: 0 auto; }
+        .circle-svg { transform: rotate(-90deg); width: 100px; height: 100px; }
+        .circle-bg { fill: none; stroke: #2d3748; stroke-width: 8; }
+        .circle-progress { 
+            fill: none; stroke: #22c55e; stroke-width: 8; stroke-linecap: round; 
+            stroke-dasharray: 283; stroke-dashoffset: 283; transition: stroke-dashoffset 0.3s ease; 
+        }
+        
+        .loader { border-top-color: #22c55e; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* File Card Styles */
+        .file-card { background: #22272e; border: 1px solid #2d333b; border-radius: 20px; transition: 0.3s; overflow: hidden; }
+        .file-card:hover { border-color: #22c55e; transform: translateY(-5px); }
+        
+        #mainContent { display: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <div id="mainContent">
+        <div class="max-w-6xl mx-auto px-4 py-10 w-full text-center relative">
+            
+            <a href="index.html" class="fixed left-5 top-5 bg-gray-800 p-3 rounded-xl text-white hover:bg-gray-700 transition-all border border-gray-700">
+                <i class="fa-solid fa-arrow-left mr-2"></i> BACK
+            </a>
+
+            <header class="mb-10 flex flex-col items-center">
+                <img src="https://img.icons8.com/fluency/96/file.png" class="h-16 w-16 mb-2" alt="Files Logo">
+                <h1 class="text-3xl md:text-4xl font-black text-white tracking-tighter uppercase">Document Store</h1>
+                <p class="text-green-500 font-bold tracking-widest text-[10px] mt-1">SECURE FILE ARCHIVE BY RAFID</p>
+            </header>
+
+            <div class="max-w-md mx-auto mb-12">
+                <div class="bg-[#2d333b] shadow-2xl rounded-3xl p-8 border border-gray-700">
+                    <input type="file" id="fileInput" class="hidden" multiple>
+                    <button onclick="document.getElementById('fileInput').click()" id="uploadBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 transition-all">
+                        <i class="fa-solid fa-file-circle-plus text-xl"></i> SELECT DOCUMENTS
+                    </button>
+
+                    <div id="progressUI" class="hidden mt-8 flex flex-col items-center">
+                        <div class="circle-wrapper">
+                            <svg class="circle-svg" viewBox="0 0 100 100">
+                                <circle class="circle-bg" cx="50" cy="50" r="45"></circle>
+                                <circle id="circleBar" class="circle-progress" cx="50" cy="50" r="45"></circle>
+                            </svg>
+                            <div id="percentValue" class="absolute inset-0 flex items-center justify-center font-black text-xl text-white">0%</div>
+                        </div>
+                        <p id="statusText" class="mt-4 text-[10px] font-black text-green-500 uppercase tracking-widest italic">UPLOADING FILES...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="gallery" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8"></div>
+            
+            <div id="loading" class="py-20">
+                <div class="inline-block loader rounded-full border-4 border-gray-700 h-10 w-10 mb-4"></div>
+                <p class="text-gray-500 font-bold tracking-widest uppercase text-[9px]">Fetching Document Data...</p>
+            </div>
+        </div>
+
+        <footer class="py-10 text-center border-t border-gray-800 bg-[#161b22] mt-auto">
+            <p class="text-gray-400 font-bold text-[10px] tracking-widest uppercase mb-1">© 2026 Ultimate File Store | Rafid Ahammed</p>
+        </footer>
+    </div>
+
+    <script>
+        // ডকুমেন্টের জন্য তৈরি করা আলাদা Apps Script URL এখানে বসান
+        const SCRIPT_URL = "YOUR_DOCUMENTS_APPS_SCRIPT_URL_HERE";
+
+        window.onload = function() {
+            if (localStorage.getItem('gallery_access') === 'true') {
+                document.getElementById('mainContent').style.display = 'block';
+                loadFiles();
+            } else {
+                window.location.href = "index.html";
+            }
+        };
+
+        async function loadFiles() {
+            const gallery = document.getElementById('gallery');
+            const loader = document.getElementById('loading');
+            gallery.innerHTML = '';
+            loader.classList.remove('hidden');
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                loader.classList.add('hidden');
+                data.forEach(file => {
+                    const extension = file.name.split('.').pop().toLowerCase();
+                    let fileIcon = "fa-file-lines";
+                    let iconColor = "text-blue-400";
+
+                    if(extension === 'pdf') { fileIcon = "fa-file-pdf"; iconColor = "text-red-500"; }
+                    else if(['zip', 'rar', '7z'].includes(extension)) { fileIcon = "fa-file-zipper"; iconColor = "text-yellow-500"; }
+                    else if(['doc', 'docx'].includes(extension)) { fileIcon = "fa-file-word"; iconColor = "text-blue-600"; }
+
+                    const card = document.createElement('div');
+                    card.className = "file-card group";
+                    card.innerHTML = `
+                        <div class="h-40 flex items-center justify-center bg-gray-900 group-hover:bg-gray-800 transition-colors">
+                            <i class="fa-solid ${fileIcon} ${iconColor} text-6xl shadow-2xl"></i>
+                        </div>
+                        <div class="p-4 bg-[#22272e]">
+                            <p class="text-[9px] font-bold text-gray-400 truncate mb-3 uppercase tracking-wider">${file.name}</p>
+                            <a href="https://drive.google.com/uc?export=download&id=${file.id}" target="_blank" onclick="showDownloadAnim(this)" class="block w-full bg-blue-600 hover:bg-green-600 text-white py-2.5 rounded-lg text-[9px] font-black tracking-widest text-center transition-all uppercase">Download File</a>
+                        </div>
+                    `;
+                    gallery.appendChild(card);
+                });
+            } catch (error) { loader.classList.add('hidden'); }
+        }
+
+        function showDownloadAnim(btn) {
+            btn.innerText = "PREPARING...";
+            setTimeout(() => { 
+                btn.innerText = "SUCCESS ✔"; 
+                btn.style.backgroundColor = "#16a34a";
+                setTimeout(() => { btn.innerText = "DOWNLOAD FILE"; btn.style.backgroundColor = "#2563eb"; }, 3000);
+            }, 1000);
+        }
+
+        document.getElementById('fileInput').addEventListener('change', async function(e) {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+            
+            const ui = document.getElementById('progressUI');
+            const bar = document.getElementById('circleBar');
+            const val = document.getElementById('percentValue');
+            const status = document.getElementById('statusText');
+            const btn = document.getElementById('uploadBtn');
+
+            ui.classList.remove('hidden');
+            btn.disabled = true;
+
+            let uploaded = 0;
+            for (let file of files) {
+                await uploadFile(file);
+                uploaded++;
+                let prog = (uploaded / files.length) * 100;
+                bar.style.strokeDashoffset = 283 - (283 * prog) / 100;
+                val.innerText = Math.round(prog) + "%";
+            }
+            
+            status.innerText = "FILES SAVED ✔";
+            setTimeout(() => { 
+                ui.classList.add('hidden'); 
+                btn.disabled = false;
+                loadFiles(); 
+            }, 2000);
+        });
+
+        function uploadFile(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    const base64 = reader.result.split(',')[1];
+                    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ base64: base64, mimetype: file.type, filename: file.name }) })
+                    .then(res => res.json()).then(res => resolve(res)).catch(() => resolve());
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    </script>
+</body>
+</html>
