@@ -10,11 +10,8 @@
         .circle-container { position: relative; width: 120px; height: 120px; }
         .circle-bg { fill: none; stroke: #2d3748; stroke-width: 8; }
         .circle-progress { fill: none; stroke: #22c55e; stroke-width: 8; stroke-linecap: round; stroke-dasharray: 283; stroke-dashoffset: 283; transition: stroke-dashoffset 0.5s ease; transform: rotate(-90deg); transform-origin: 50% 50%; }
-        
-        /* Success Animation */
         .check-mark { display: none; color: #22c55e; font-size: 40px; animation: scaleUp 0.3s ease-in-out; }
         @keyframes scaleUp { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-        
         .loader { border-top-color: #22c55e; animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
@@ -24,16 +21,13 @@
     <div class="flex-grow max-w-6xl mx-auto px-4 py-10 w-full">
         <header class="text-center mb-10">
             <h1 class="text-4xl font-extrabold text-white tracking-widest uppercase">ULTIMATE GALLERY</h1>
-            <p class="text-gray-400 mt-2 font-medium italic">Your images are securely stored in the cloud</p>
+            <p class="text-gray-400 mt-2 font-medium italic">Secure Cloud Storage for Your Memories</p>
         </header>
 
         <div class="max-w-md mx-auto mb-12 text-center">
             <div class="bg-[#2d333b] shadow-2xl rounded-3xl p-8 border border-gray-700">
                 <input type="file" id="fileInput" class="hidden" accept="image/*" multiple>
                 <button onclick="document.getElementById('fileInput').click()" id="uploadBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg flex items-center justify-center gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                    </svg>
                     SELECT IMAGE
                 </button>
 
@@ -87,42 +81,27 @@
                 data.forEach(file => {
                     const card = document.createElement('div');
                     card.className = "bg-[#22272e] rounded-2xl shadow-lg overflow-hidden border border-gray-800 hover:border-gray-500 transition duration-300 group";
-                    const thumbUrl = `https://lh3.googleusercontent.com/u/0/d/$${file.id}`;
+                    
+                    // Fixed Thumbnail URL
+                    const thumbUrl = `https://lh3.googleusercontent.com/u/0/d/${file.id}=w400-h400-p-k-no-v0`;
                     
                     card.innerHTML = `
                         <div class="h-56 bg-gray-900 overflow-hidden relative">
                             <img src="${thumbUrl}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" 
-                                 onerror="this.src='https://via.placeholder.com/400x300/1a1c22/ffffff?text=Loading...'">
+                                 onerror="this.src='https://via.placeholder.com/400x300/1a1c22/ffffff?text=Syncing...'">
                         </div>
                         <div class="p-5 text-center">
                             <p class="text-[10px] font-bold text-gray-500 truncate mb-4 uppercase tracking-wider">${file.name}</p>
-                            <button onclick="handleDownload('${file.id}', '${file.name}', this)" class="block w-full bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl text-[10px] font-black tracking-widest transition-all">
+                            <a href="https://drive.google.com/uc?export=download&id=${file.id}" 
+                               class="block w-full bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl text-[10px] font-black tracking-widest transition-all"
+                               download="${file.name}" target="_self">
                                 DOWNLOAD ORIGINAL
-                            </button>
+                            </a>
                         </div>
                     `;
                     gallery.appendChild(card);
                 });
             } catch (error) { loader.classList.add('hidden'); }
-        }
-
-        async function handleDownload(id, name, btn) {
-            const originalText = btn.innerText;
-            btn.innerText = "DOWNLOADING...";
-            btn.style.opacity = "0.7";
-            
-            const url = `https://drive.google.com/uc?export=download&id=${id}`;
-            window.open(url, '_blank');
-            
-            setTimeout(() => {
-                btn.innerText = "DOWNLOAD DONE ✔";
-                btn.classList.replace('bg-green-600', 'bg-blue-600');
-                setTimeout(() => {
-                    btn.innerText = originalText;
-                    btn.classList.replace('bg-blue-600', 'bg-green-600');
-                    btn.style.opacity = "1";
-                }, 2000);
-            }, 1000);
         }
 
         document.getElementById('fileInput').addEventListener('change', async function(e) {
@@ -143,18 +122,14 @@
             btn.style.opacity = '0.5';
 
             let uploaded = 0;
-            for (let i = 0; i < files.length; i += 2) {
-                const chunk = files.slice(i, i + 2);
-                await Promise.all(chunk.map(async (file) => {
-                    await uploadFile(file);
-                    uploaded++;
-                    let prog = (uploaded / files.length) * 100;
-                    bar.style.strokeDashoffset = 283 - (283 * prog) / 100;
-                    val.innerText = Math.round(prog) + "%";
-                }));
+            for (let i = 0; i < files.length; i++) {
+                await uploadFile(files[i]);
+                uploaded++;
+                let prog = (uploaded / files.length) * 100;
+                bar.style.strokeDashoffset = 283 - (283 * prog) / 100;
+                val.innerText = Math.round(prog) + "%";
             }
 
-            // Success Animation
             val.style.display = 'none';
             mark.style.display = 'flex';
             status.innerText = "UPLOAD DONE ✔";
