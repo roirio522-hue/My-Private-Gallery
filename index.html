@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rafid Ahammed Ultimate Gallery</title>
+    <title>Ultimate Gallery - Rafid Ahammed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #1a1c22; color: #e2e8f0; }
@@ -18,14 +18,17 @@
 
     <div class="flex-grow max-w-6xl mx-auto px-4 py-10 w-full">
         <header class="text-center mb-10">
-            <h1 class="text-4xl font-extrabold text-white tracking-tight italic uppercase">রাফিদ আহমেদ গ্যালারি</h1>
-            <p class="text-gray-400 mt-2 font-medium">আপনার নিরাপদ এবং ব্যক্তিগত ড্রাইভ স্টোরেজ</p>
+            <h1 class="text-4xl font-extrabold text-white tracking-widest uppercase">ULTIMATE GALLERY</h1>
+            <p class="text-gray-400 mt-2 font-medium italic">আপনার ছবিগুলো সুরক্ষিতভাবে সংরক্ষিত হচ্ছে</p>
         </header>
 
         <div class="max-w-md mx-auto mb-12 text-center">
             <div class="bg-[#2d333b] shadow-2xl rounded-3xl p-8 border border-gray-700">
                 <input type="file" id="fileInput" class="hidden" accept="image/*" multiple>
-                <button onclick="document.getElementById('fileInput').click()" id="uploadBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 px-8 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-3 text-lg">
+                <button onclick="document.getElementById('fileInput').click()" id="uploadBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg flex items-center justify-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
                     সিলেক্ট ইমেজ (Select Image)
                 </button>
 
@@ -46,14 +49,18 @@
 
         <div id="loading" class="text-center py-20">
             <div class="inline-block loader rounded-full border-4 border-gray-700 h-12 w-12 mb-4"></div>
-            <p class="text-gray-500 font-medium tracking-widest uppercase text-xs">ছবিগুলো লোড হচ্ছে...</p>
+            <p class="text-gray-500 font-medium tracking-widest uppercase text-xs">গ্যালারি রিফ্রেশ হচ্ছে...</p>
         </div>
     </div>
 
-    <footer class="bg-[#161b22] border-t border-gray-800 py-10 text-center">
+    <footer class="py-10 text-center border-t border-gray-800 bg-[#161b22]">
         <div class="container mx-auto px-4">
-            <p class="text-gray-300 font-bold text-lg">© 2024 সর্বস্বত্ব সংরক্ষিত</p>
-            <p class="text-gray-500 font-medium mt-1 uppercase tracking-widest text-sm italic">ক্রিয়েট পাই রাফিদ আহমেদ</p>
+            <p class="text-gray-400 font-bold text-xs tracking-widest uppercase mb-1">
+                © 2026 IMAGES RESIZER PRO | ALL RIGHTS RESERVED
+            </p>
+            <p class="text-gray-600 font-medium text-[10px] tracking-widest uppercase">
+                CREATED BY RAFID AHAMMED
+            </p>
         </div>
     </footer>
 
@@ -75,7 +82,6 @@
                     const card = document.createElement('div');
                     card.className = "bg-[#22272e] rounded-2xl shadow-lg overflow-hidden border border-gray-800 hover:border-gray-500 transition duration-300 group";
                     
-                    // উন্নত প্রিভিউ লিঙ্ক
                     const thumbUrl = `https://lh3.googleusercontent.com/u/0/d/${file.id}`;
                     
                     card.innerHTML = `
@@ -85,7 +91,7 @@
                         </div>
                         <div class="p-5">
                             <p class="text-[10px] font-bold text-gray-500 truncate mb-4 uppercase tracking-wider">${file.name}</p>
-                            <button onclick="downloadImage('${file.id}', '${file.name}')" class="block w-full bg-green-600 hover:bg-green-500 text-white text-center py-3.5 rounded-xl text-xs font-black transition-all shadow-md">
+                            <button onclick="downloadImage('${file.id}', '${file.name}')" class="block w-full bg-green-600 hover:bg-green-500 text-white text-center py-3 rounded-xl text-[10px] font-black tracking-widest transition-all">
                                 ORIGINAL DOWNLOAD
                             </button>
                         </div>
@@ -95,16 +101,9 @@
             } catch (error) { loader.classList.add('hidden'); }
         }
 
-        // ডাউনলোড ফাংশন ফিক্স
         function downloadImage(fileId, fileName) {
             const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
-            const link = document.createElement('a');
-            link.href = downloadUrl;
-            link.setAttribute('download', fileName);
-            link.setAttribute('target', '_blank');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            window.open(downloadUrl, '_blank');
         }
 
         document.getElementById('fileInput').addEventListener('change', async function(e) {
@@ -122,7 +121,7 @@
             uploadBtn.style.opacity = '0.5';
 
             let uploadedCount = 0;
-            const chunkSize = 2; // ডাউনলোড স্পিড ও স্টাবিলিটির জন্য ২ করা হয়েছে
+            const chunkSize = 2; 
 
             for (let i = 0; i < files.length; i += chunkSize) {
                 const chunk = files.slice(i, i + chunkSize);
@@ -132,12 +131,12 @@
                     let prog = (uploadedCount / files.length) * 100;
                     circleBar.style.strokeDashoffset = 283 - (283 * prog) / 100;
                     percentValue.innerText = Math.round(prog) + "%";
-                    fileCountText.innerText = `সফল আপলোড: ${uploadedCount} / ${files.length}`;
+                    fileCountText.innerText = `আপলোড: ${uploadedCount} / ${files.length}`;
                 }));
             }
 
             setTimeout(() => {
-                alert("সব ছবি আপলোড সম্পন্ন হয়েছে!");
+                alert("সফলভাবে আপলোড হয়েছে!");
                 progressUI.classList.add('hidden');
                 uploadBtn.disabled = false;
                 uploadBtn.style.opacity = '1';
