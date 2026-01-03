@@ -1,25 +1,30 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Gallery - Rafid Ahammed</title>
+    <title>ULTIMATE GALLERY | Rafid Ahammed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #1a1c22; color: #e2e8f0; }
+        body { background-color: #1a1c22; color: #e2e8f0; font-family: 'Inter', sans-serif; }
         .circle-container { position: relative; width: 120px; height: 120px; }
         .circle-bg { fill: none; stroke: #2d3748; stroke-width: 8; }
         .circle-progress { fill: none; stroke: #22c55e; stroke-width: 8; stroke-linecap: round; stroke-dasharray: 283; stroke-dashoffset: 283; transition: stroke-dashoffset 0.5s ease; transform: rotate(-90deg); transform-origin: 50% 50%; }
+        
+        /* Success Animation */
+        .check-mark { display: none; color: #22c55e; font-size: 40px; animation: scaleUp 0.3s ease-in-out; }
+        @keyframes scaleUp { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        
         .loader { border-top-color: #22c55e; animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="min-h-screen flex flex-col font-sans">
+<body class="min-h-screen flex flex-col">
 
     <div class="flex-grow max-w-6xl mx-auto px-4 py-10 w-full">
         <header class="text-center mb-10">
             <h1 class="text-4xl font-extrabold text-white tracking-widest uppercase">ULTIMATE GALLERY</h1>
-            <p class="text-gray-400 mt-2 font-medium italic">আপনার ছবিগুলো সুরক্ষিতভাবে সংরক্ষিত হচ্ছে</p>
+            <p class="text-gray-400 mt-2 font-medium italic">Your images are securely stored in the cloud</p>
         </header>
 
         <div class="max-w-md mx-auto mb-12 text-center">
@@ -29,7 +34,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                     </svg>
-                    সিলেক্ট ইমেজ (Select Image)
+                    SELECT IMAGE
                 </button>
 
                 <div id="progressUI" class="hidden mt-8 flex flex-col items-center">
@@ -39,8 +44,9 @@
                             <circle id="circleBar" class="circle-progress" cx="50" cy="50" r="45"></circle>
                         </svg>
                         <div id="percentValue" class="absolute inset-0 flex items-center justify-center font-black text-2xl text-white">0%</div>
+                        <div id="successMark" class="absolute inset-0 flex items-center justify-center check-mark">✔</div>
                     </div>
-                    <p id="fileCountText" class="mt-4 text-sm font-bold text-green-400 italic">প্রসেসিং হচ্ছে...</p>
+                    <p id="statusText" class="mt-4 text-sm font-bold text-green-400 uppercase tracking-widest">Uploading...</p>
                 </div>
             </div>
         </div>
@@ -49,7 +55,7 @@
 
         <div id="loading" class="text-center py-20">
             <div class="inline-block loader rounded-full border-4 border-gray-700 h-12 w-12 mb-4"></div>
-            <p class="text-gray-500 font-medium tracking-widest uppercase text-xs">গ্যালারি রিফ্রেশ হচ্ছে...</p>
+            <p class="text-gray-500 font-medium tracking-widest uppercase text-xs">Syncing Gallery...</p>
         </div>
     </div>
 
@@ -81,18 +87,17 @@
                 data.forEach(file => {
                     const card = document.createElement('div');
                     card.className = "bg-[#22272e] rounded-2xl shadow-lg overflow-hidden border border-gray-800 hover:border-gray-500 transition duration-300 group";
-                    
-                    const thumbUrl = `https://lh3.googleusercontent.com/u/0/d/${file.id}`;
+                    const thumbUrl = `https://lh3.googleusercontent.com/u/0/d/$${file.id}`;
                     
                     card.innerHTML = `
                         <div class="h-56 bg-gray-900 overflow-hidden relative">
                             <img src="${thumbUrl}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" 
                                  onerror="this.src='https://via.placeholder.com/400x300/1a1c22/ffffff?text=Loading...'">
                         </div>
-                        <div class="p-5">
+                        <div class="p-5 text-center">
                             <p class="text-[10px] font-bold text-gray-500 truncate mb-4 uppercase tracking-wider">${file.name}</p>
-                            <button onclick="downloadImage('${file.id}', '${file.name}')" class="block w-full bg-green-600 hover:bg-green-500 text-white text-center py-3 rounded-xl text-[10px] font-black tracking-widest transition-all">
-                                ORIGINAL DOWNLOAD
+                            <button onclick="handleDownload('${file.id}', '${file.name}', this)" class="block w-full bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl text-[10px] font-black tracking-widest transition-all">
+                                DOWNLOAD ORIGINAL
                             </button>
                         </div>
                     `;
@@ -101,47 +106,65 @@
             } catch (error) { loader.classList.add('hidden'); }
         }
 
-        function downloadImage(fileId, fileName) {
-            const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
-            window.open(downloadUrl, '_blank');
+        async function handleDownload(id, name, btn) {
+            const originalText = btn.innerText;
+            btn.innerText = "DOWNLOADING...";
+            btn.style.opacity = "0.7";
+            
+            const url = `https://drive.google.com/uc?export=download&id=${id}`;
+            window.open(url, '_blank');
+            
+            setTimeout(() => {
+                btn.innerText = "DOWNLOAD DONE ✔";
+                btn.classList.replace('bg-green-600', 'bg-blue-600');
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.classList.replace('bg-blue-600', 'bg-green-600');
+                    btn.style.opacity = "1";
+                }, 2000);
+            }, 1000);
         }
 
         document.getElementById('fileInput').addEventListener('change', async function(e) {
             const files = Array.from(e.target.files);
             if (files.length === 0) return;
 
-            const progressUI = document.getElementById('progressUI');
-            const circleBar = document.getElementById('circleBar');
-            const percentValue = document.getElementById('percentValue');
-            const fileCountText = document.getElementById('fileCountText');
-            const uploadBtn = document.getElementById('uploadBtn');
+            const ui = document.getElementById('progressUI');
+            const bar = document.getElementById('circleBar');
+            const val = document.getElementById('percentValue');
+            const mark = document.getElementById('successMark');
+            const status = document.getElementById('statusText');
+            const btn = document.getElementById('uploadBtn');
 
-            progressUI.classList.remove('hidden');
-            uploadBtn.disabled = true;
-            uploadBtn.style.opacity = '0.5';
+            ui.classList.remove('hidden');
+            mark.style.display = 'none';
+            val.style.display = 'flex';
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
 
-            let uploadedCount = 0;
-            const chunkSize = 2; 
-
-            for (let i = 0; i < files.length; i += chunkSize) {
-                const chunk = files.slice(i, i + chunkSize);
+            let uploaded = 0;
+            for (let i = 0; i < files.length; i += 2) {
+                const chunk = files.slice(i, i + 2);
                 await Promise.all(chunk.map(async (file) => {
                     await uploadFile(file);
-                    uploadedCount++;
-                    let prog = (uploadedCount / files.length) * 100;
-                    circleBar.style.strokeDashoffset = 283 - (283 * prog) / 100;
-                    percentValue.innerText = Math.round(prog) + "%";
-                    fileCountText.innerText = `আপলোড: ${uploadedCount} / ${files.length}`;
+                    uploaded++;
+                    let prog = (uploaded / files.length) * 100;
+                    bar.style.strokeDashoffset = 283 - (283 * prog) / 100;
+                    val.innerText = Math.round(prog) + "%";
                 }));
             }
 
+            // Success Animation
+            val.style.display = 'none';
+            mark.style.display = 'flex';
+            status.innerText = "UPLOAD DONE ✔";
+            
             setTimeout(() => {
-                alert("সফলভাবে আপলোড হয়েছে!");
-                progressUI.classList.add('hidden');
-                uploadBtn.disabled = false;
-                uploadBtn.style.opacity = '1';
+                ui.classList.add('hidden');
+                btn.disabled = false;
+                btn.style.opacity = '1';
                 loadGallery();
-            }, 800);
+            }, 2000);
         });
 
         function uploadFile(file) {
