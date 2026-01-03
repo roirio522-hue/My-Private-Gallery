@@ -3,185 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate AI Drive | Rafid</title>
+    
+    <title>Ultimate Gallery by Rafid Ahammed</title>
+    <meta name="description" content="Ultimate Gallery by Rafid Ahammed - Secure Cloud Storage">
+    <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/gallery.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { background-color: #0f1115; color: #e2e8f0; font-family: 'Inter', sans-serif; margin: 0; }
+        body { background-color: #1a1c22; color: #e2e8f0; font-family: 'Inter', sans-serif; }
         
-        .sidebar { position: fixed; left: -260px; top: 0; width: 260px; height: 100%; background: #1a1c22; transition: 0.3s; z-index: 1000; box-shadow: 5px 0 20px rgba(0,0,0,0.5); }
-        .sidebar.active { left: 0; }
-        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 999; backdrop-filter: blur(4px); }
-        .overlay.active { display: block; }
-
-        .nav-item { display: flex; align-items: center; padding: 8px 0; cursor: pointer; transition: 0.2s; }
-        .icon-box { 
-            width: 38px; 
-            height: 38px; 
-            border-radius: 10px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            margin-right: 12px; 
-            font-size: 16px; 
-            flex-shrink: 0; 
+        /* Fixed Circular Progress Styles */
+        .circle-wrapper { position: relative; width: 100px; height: 100px; margin: 0 auto; }
+        .circle-svg { transform: rotate(-90deg); width: 100px; height: 100px; }
+        .circle-bg { fill: none; stroke: #2d3748; stroke-width: 8; }
+        .circle-progress { 
+            fill: none; 
+            stroke: #22c55e; 
+            stroke-width: 8; 
+            stroke-linecap: round; 
+            stroke-dasharray: 283; 
+            stroke-dashoffset: 283; 
+            transition: stroke-dashoffset 0.3s ease; 
         }
-
-        .bg-all { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-        .bg-photos { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
-        .bg-videos { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-        .bg-music { background: rgba(234, 179, 8, 0.15); color: #eab308; }
-
-        .nav-text { font-size: 13px; font-weight: 700; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.02em; }
-        .nav-item:hover .nav-text { color: #ffffff; }
-
-        .header-compact { padding-top: 20px; margin-bottom: 25px; }
-        .btn-upload { padding: 12px 30px; border-radius: 12px; font-weight: 800; font-size: 14px; letter-spacing: 0.05em; }
+        
+        .check-mark { display: none; color: #22c55e; font-size: 40px; animation: scaleUp 0.3s ease-in-out; }
+        @keyframes scaleUp { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        
+        .loader { border-top-color: #22c55e; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        #mainContent { display: none; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-    
-    <nav class="sidebar border-r border-gray-800" id="sidebar">
-        <div class="p-6">
-            <h2 class="text-[10px] font-black text-blue-500 mb-6 uppercase tracking-[0.2em]">AI DASHBOARD</h2>
-            <ul class="space-y-2">
-                <li onclick="filterAI('ALL')" class="nav-item">
-                    <div class="icon-box bg-all"><i class="fa-solid fa-layer-group"></i></div> 
-                    <span class="nav-text">All Files</span>
-                </li>
-                <li onclick="filterAI('IMAGE')" class="nav-item">
-                    <div class="icon-box bg-photos"><i class="fa-solid fa-image"></i></div> 
-                    <span class="nav-text">Photos</span>
-                </li>
-                <li onclick="filterAI('VIDEO')" class="nav-item">
-                    <div class="icon-box bg-videos"><i class="fa-solid fa-play"></i></div> 
-                    <span class="nav-text">Videos</span>
-                </li>
-                <li onclick="filterAI('AUDIO')" class="nav-item">
-                    <div class="icon-box bg-music"><i class="fa-solid fa-music"></i></div> 
-                    <span class="nav-text">Music</span>
-                </li>
-            </ul>
+    <div id="loginSection" class="flex-grow flex items-center justify-center px-4">
+        <div class="bg-[#2d333b] p-8 rounded-3xl shadow-2xl border border-gray-700 w-full max-w-sm text-center">
+            <img src="https://img.icons8.com/fluency/96/gallery.png" class="h-16 w-16 mx-auto mb-4" alt="Rafid Ahammed Gallery">
+            <h2 class="text-xl font-black text-white mb-6 uppercase tracking-widest">Access Protected</h2>
+            <input type="password" id="passInput" placeholder="Enter Secret Password" class="w-full bg-[#1a1c22] border border-gray-600 rounded-xl py-4 px-4 mb-4 text-center focus:outline-none focus:border-blue-500 text-white">
+            <button onclick="checkPassword()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all">UNLOCK GALLERY</button>
+            <p id="errorMsg" class="text-red-500 text-sm mt-4 hidden font-bold">WRONG PASSWORD!</p>
         </div>
-    </nav>
-
-    <div class="flex-grow max-w-7xl mx-auto px-4 w-full">
-        <header class="header-compact text-center relative">
-            <button onclick="toggleMenu()" class="absolute left-0 top-5 p-2 bg-[#1a1c22] border border-gray-800 rounded-lg text-sm"><i class="fa-solid fa-bars"></i></button>
-            <h1 class="text-xl font-black uppercase tracking-widest text-white m-0">Ultimate AI Drive</h1>
-            <p class="text-[9px] font-black tracking-[0.3em] mt-1 text-blue-500 uppercase">BY RAFID AHAMMED</p>
-            <div id="currentFilter" class="inline-block mt-2 px-3 py-0.5 rounded-full bg-blue-500/10 text-blue-400 text-[8px] font-black uppercase tracking-widest">Showing: All</div>
-        </header>
-
-        <div class="max-w-xl mx-auto mb-8 text-center">
-            <button onclick="document.getElementById('fileInput').click()" class="bg-blue-600 hover:bg-blue-700 text-white btn-upload shadow-lg transition-all flex items-center mx-auto gap-2 uppercase mt-4">
-                <i class="fa-solid fa-cloud-arrow-up text-base"></i> Upload Files
-            </button>
-            <input type="file" id="fileInput" class="hidden" multiple>
-
-            <div id="loader" class="mt-8">
-                <div class="animate-spin text-blue-600 text-2xl mb-2 flex justify-center"><i class="fa-solid fa-spinner"></i></div>
-                <p class="text-gray-600 font-bold text-[9px] tracking-widest uppercase italic">AI IS SYNCING...</p>
-            </div>
-
-            <div id="progressArea" class="hidden mt-6">
-                <div class="w-full bg-gray-800 rounded-full h-1 mb-2">
-                    <div id="progressBar" class="bg-blue-500 h-1 rounded-full transition-all" style="width: 0%"></div>
-                </div>
-                <p id="progressText" class="text-[9px] font-bold text-blue-400 uppercase tracking-widest">Syncing: 0%</p>
-            </div>
-        </div>
-
-        <div id="fileGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
     </div>
 
-    <footer class="py-6 border-t border-gray-900 bg-[#0f1115] text-center mt-auto">
-        <p class="text-gray-500 font-bold text-[9px] tracking-[0.3em] uppercase mb-1">© 2026 Ultimate AI Drive | All Rights Reserved</p>
-        <p class="text-blue-500/40 text-[8px] font-black tracking-widest uppercase">Developed by Rafid Ahammed</p>
-    </footer>
+    <div id="mainContent">
+        <div class="max-w-6xl mx-auto px-4 py-10 w-full text-center">
+            <header class="mb-10 flex flex-col items-center">
+                <img src="https://img.icons8.com/fluency/96/gallery.png" class="h-16 w-16 mb-2" alt="Logo">
+                <h1 class="text-3xl md:text-4xl font-black text-white tracking-tighter uppercase">Ultimate Gallery</h1>
+                <p class="text-blue-400 font-bold tracking-widest text-[10px] mt-1">BY RAFID AHAMMED</p>
+                <button onclick="logout()" class="mt-4 text-[10px] bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white px-4 py-1.5 rounded-full border border-red-600/30 font-bold transition-all">SECURE LOGOUT</button>
+            </header>
+
+            <div class="max-w-md mx-auto mb-12">
+                <div class="bg-[#2d333b] shadow-2xl rounded-3xl p-8 border border-gray-700">
+                    <input type="file" id="fileInput" class="hidden" accept="image/*" multiple>
+                    <button onclick="document.getElementById('fileInput').click()" id="uploadBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                        SELECT IMAGES
+                    </button>
+
+                    <div id="progressUI" class="hidden mt-8 flex flex-col items-center">
+                        <div class="circle-wrapper">
+                            <svg class="circle-svg" viewBox="0 0 100 100">
+                                <circle class="circle-bg" cx="50" cy="50" r="45"></circle>
+                                <circle id="circleBar" class="circle-progress" cx="50" cy="50" r="45"></circle>
+                            </svg>
+                            <div id="percentValue" class="absolute inset-0 flex items-center justify-center font-black text-xl text-white">0%</div>
+                            <div id="successMark" class="absolute inset-0 flex items-center justify-center check-mark">✔</div>
+                        </div>
+                        <p id="statusText" class="mt-4 text-[10px] font-black text-green-400 uppercase tracking-widest">UPLOADING...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="gallery" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8"></div>
+            
+            <div id="loading" class="py-20">
+                <div class="inline-block loader rounded-full border-4 border-gray-700 h-10 w-10 mb-4"></div>
+                <p class="text-gray-500 font-bold tracking-widest uppercase text-[9px]">Fetching Cloud Data...</p>
+            </div>
+        </div>
+
+        <footer class="py-10 text-center border-t border-gray-800 bg-[#161b22] mt-auto">
+            <p class="text-gray-400 font-bold text-[10px] tracking-widest uppercase mb-1">© 2026 Ultimate Gallery | All Rights Reserved</p>
+            <p class="text-gray-600 font-medium text-[9px] tracking-widest uppercase">Created by Rafid Ahammed</p>
+        </footer>
+    </div>
 
     <script>
-        // আপনার দেওয়া নতুন URL টি এখানে বসানো হয়েছে
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1TjjSWSsVUpSq5yqWfYWnQ92ghiR3PZ5G4xF4kKjX2iRTBEqaU-wi3y_MDYDBs9zPHQ/exec";
+        const CORRECT_PASSWORD = "FF4810026RaFiD#"; 
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxL8IC4rQBBa4dclcvGAgE1sfQbJzi4qPZyNqwjeElGOjmCKzJX3txJ6u3CesQ_u9-8ww/exec";
 
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-
-        async function loadData() {
-            try {
-                const res = await fetch(SCRIPT_URL);
-                const data = await res.json();
-                document.getElementById('loader').classList.add('hidden');
-                const grid = document.getElementById('fileGrid');
-                grid.innerHTML = '';
-                
-                data.forEach(file => {
-                    const card = document.createElement('div');
-                    card.className = "bg-[#1a1c22] rounded-xl overflow-hidden border border-gray-800 transition-all file-card";
-                    card.setAttribute('data-tag', file.tag);
-                    
-                    let preview = `<img src="https://drive.google.com/thumbnail?id=${file.id}&sz=w800" class="w-full h-32 object-cover">`;
-                    if(file.tag === 'VIDEO') preview = `<div class="h-32 bg-slate-900 flex items-center justify-center text-red-500 text-2xl"><i class="fa-solid fa-circle-play"></i></div>`;
-                    if(file.tag === 'AUDIO') preview = `<div class="h-32 bg-slate-900 flex items-center justify-center text-yellow-500 text-2xl"><i class="fa-solid fa-music"></i></div>`;
-                    
-                    card.innerHTML = `${preview}<div class="p-2 border-t border-gray-800"><p class="text-[8px] font-bold truncate uppercase text-gray-500">${file.name}</p></div>`;
-                    grid.appendChild(card);
-                });
-            } catch (e) { 
-                console.error("Loading Error:", e);
-                document.getElementById('loader').innerHTML = '<p class="text-red-500 text-[9px] font-black">ERROR: AI SYNC FAILED</p>';
+        function checkPassword() {
+            if (document.getElementById('passInput').value === CORRECT_PASSWORD) {
+                localStorage.setItem('gallery_access', 'true');
+                showContent();
+            } else {
+                document.getElementById('errorMsg').classList.remove('hidden');
+                setTimeout(() => document.getElementById('errorMsg').classList.add('hidden'), 2000);
             }
         }
 
-        document.getElementById('fileInput').onchange = async (e) => {
-            const files = Array.from(e.target.files);
-            const area = document.getElementById('progressArea');
-            const bar = document.getElementById('progressBar');
-            const txt = document.getElementById('progressText');
-            
-            area.classList.remove('hidden');
-            for(let i=0; i < files.length; i++) {
-                const reader = new FileReader();
-                reader.onload = async () => {
-                    const base64 = reader.result.split(',')[1];
-                    try {
-                        await fetch(SCRIPT_URL, {
-                            method: "POST", 
-                            mode: 'no-cors', 
-                            body: JSON.stringify({
-                                base64: base64, 
-                                mimetype: files[i].type, 
-                                filename: files[i].name
-                            })
-                        });
-                        let p = Math.round(((i+1)/files.length)*100);
-                        bar.style.width = p + '%';
-                        txt.innerText = "Syncing: " + p + "%";
-                        if(p === 100) { 
-                            setTimeout(() => { location.reload(); }, 1200); 
-                        }
-                    } catch (err) {
-                        console.error("Upload Error:", err);
-                    }
-                };
-                reader.readAsDataURL(files[i]);
-            }
+        function showContent() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            loadGallery();
+        }
+
+        function logout() {
+            localStorage.removeItem('gallery_access');
+            location.reload();
+        }
+
+        window.onload = function() {
+            if (localStorage.getItem('gallery_access') === 'true') showContent();
         };
 
-        function filterAI(t) { 
-            toggleMenu(); 
-            document.getElementById('currentFilter').innerText = "Showing: " + t;
-            document.querySelectorAll('.file-card').forEach(c => {
-                c.style.display = (t === 'ALL' || c.getAttribute('data-tag') === t) ? 'block' : 'none';
-            }); 
+        async function loadGallery() {
+            const gallery = document.getElementById('gallery');
+            const loader = document.getElementById('loading');
+            gallery.innerHTML = '';
+            loader.classList.remove('hidden');
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                loader.classList.add('hidden');
+                data.forEach(file => {
+                    const card = document.createElement('div');
+                    card.className = "bg-[#22272e] rounded-2xl shadow-xl overflow-hidden border border-gray-800 hover:border-gray-500 transition duration-300 group";
+                    card.innerHTML = `
+                        <div class="h-48 md:h-56 bg-gray-900 overflow-hidden">
+                            <img src="https://drive.google.com/thumbnail?id=${file.id}&sz=w800" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" onload="this.style.opacity=1" style="opacity:0">
+                        </div>
+                        <div class="p-4">
+                            <p class="text-[9px] font-bold text-gray-500 truncate mb-3 uppercase tracking-wider">${file.name}</p>
+                            <a href="https://drive.google.com/uc?export=download&id=${file.id}" target="_blank" onclick="showDownloadAnim(this)" class="block w-full bg-green-600 text-white py-2.5 rounded-lg text-[9px] font-black tracking-widest text-center">DOWNLOAD</a>
+                        </div>
+                    `;
+                    gallery.appendChild(card);
+                });
+            } catch (error) { loader.classList.add('hidden'); }
         }
 
-        window.onload = loadData;
+        function showDownloadAnim(btn) {
+            btn.innerText = "DOWNLOADING...";
+            setTimeout(() => { 
+                btn.innerText = "SUCCESS ✔"; 
+                btn.style.backgroundColor = "#3b82f6";
+                setTimeout(() => { btn.innerText = "DOWNLOAD"; btn.style.backgroundColor = "#16a34a"; }, 3000);
+            }, 1000);
+        }
+
+        document.getElementById('fileInput').addEventListener('change', async function(e) {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+            
+            const ui = document.getElementById('progressUI');
+            const bar = document.getElementById('circleBar');
+            const val = document.getElementById('percentValue');
+            const mark = document.getElementById('successMark');
+            const status = document.getElementById('statusText');
+            const btn = document.getElementById('uploadBtn');
+
+            ui.classList.remove('hidden');
+            mark.style.display = 'none';
+            val.style.display = 'flex';
+            status.innerText = "UPLOADING...";
+            btn.disabled = true;
+
+            let uploaded = 0;
+            for (let file of files) {
+                await uploadFile(file);
+                uploaded++;
+                let prog = (uploaded / files.length) * 100;
+                bar.style.strokeDashoffset = 283 - (283 * prog) / 100;
+                val.innerText = Math.round(prog) + "%";
+            }
+            
+            val.style.display = 'none';
+            mark.style.display = 'flex';
+            status.innerText = "UPLOAD DONE ✔";
+            setTimeout(() => { 
+                ui.classList.add('hidden'); 
+                btn.disabled = false;
+                loadGallery(); 
+            }, 2000);
+        });
+
+        function uploadFile(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    const base64 = reader.result.split(',')[1];
+                    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ base64: base64, mimetype: file.type, filename: file.name }) })
+                    .then(res => res.json()).then(res => resolve(res)).catch(() => resolve());
+                };
+                reader.readAsDataURL(file);
+            });
+        }
     </script>
 </body>
 </html>
