@@ -14,7 +14,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { background-color: #1a1c22; color: #e2e8f0; font-family: 'Inter', sans-serif; }
         
-        /* Circular Progress Styles */
         .circle-wrapper { position: relative; width: 100px; height: 100px; margin: 0 auto; }
         .circle-svg { transform: rotate(-90deg); width: 100px; height: 100px; }
         .circle-bg { fill: none; stroke: #2d3748; stroke-width: 8; }
@@ -26,7 +25,6 @@
         .loader { border-top-color: #eab308; animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* Audio Card Styles */
         .audio-card { background: #22272e; border: 1px solid #2d333b; border-radius: 20px; transition: 0.3s; }
         .audio-card:hover { border-color: #eab308; transform: translateY(-5px); }
         
@@ -83,9 +81,8 @@
 
     <script>
         // আপনার দেওয়া নতুন অডিও Apps Script URL টি এখানে আপডেট করা হয়েছে
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzzk8TZ_O8nNrcdr2MnKixD-kQI15wHMFP9c6RfxBBdk0zBGJzJ8f6FvVL_1QqQRBOc/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyEKzl3m9K0QYMnDW8uKNCOrBQpuph2z3qN6WYUQYhB6XWiwN5VchN8q__ObjXTEzut/exec";
 
-        // মূল গ্যালারির পাসওয়ার্ড দিয়েই এটি খুলবে (যদি ইতোমধ্যে লগইন করা থাকে)
         window.onload = function() {
             if (localStorage.getItem('gallery_access') === 'true') {
                 document.getElementById('mainContent').style.display = 'block';
