@@ -6,30 +6,30 @@
     <title>আমার ক্লাউড গ্যালারি</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-slate-50 min-h-screen">
 
     <div class="max-w-6xl mx-auto px-4 py-10">
         <header class="text-center mb-10">
-            <h1 class="text-3xl font-bold text-gray-800 tracking-tight">ড্রাইভ গ্যালারি</h1>
-            <p class="text-gray-500 mt-2">ছবিগুলো সরাসরি গুগল ড্রাইভ থেকে দেখা যাচ্ছে</p>
+            <h1 class="text-4xl font-extrabold text-slate-800 tracking-tight">ড্রাইভ গ্যালারি</h1>
+            <p class="text-slate-500 mt-2 font-medium">আপনার ছবিগুলো সরাসরি ড্রাইভ থেকে লোড হচ্ছে</p>
         </header>
 
         <div class="flex justify-center mb-12">
-            <div class="bg-white shadow-lg rounded-xl p-4 flex items-center gap-4 border border-gray-100">
+            <div class="bg-white shadow-xl rounded-2xl p-4 flex items-center gap-4 border border-slate-100">
                 <input type="file" id="fileInput" class="hidden" accept="image/*">
-                <button onclick="document.getElementById('fileInput').click()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition">
-                    + ছবি আপলোড
+                <button onclick="document.getElementById('fileInput').click()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition shadow-lg">
+                    + নতুন ছবি যোগ করুন
                 </button>
-                <div id="uploadStatus" class="hidden text-blue-600 font-medium animate-pulse">আপলোড হচ্ছে...</div>
+                <div id="uploadStatus" class="hidden text-blue-600 font-bold animate-pulse">আপলোড হচ্ছে...</div>
             </div>
         </div>
 
-        <div id="gallery" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div id="gallery" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             </div>
 
         <div id="loading" class="text-center py-20">
-            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-blue-500 border-t-transparent"></div>
-            <p class="mt-4 text-gray-500">ড্রাইভ থেকে ছবি আনা হচ্ছে...</p>
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+            <p class="mt-4 text-slate-400 font-medium">ড্রাইভ থেকে ছবি আনা হচ্ছে...</p>
         </div>
     </div>
 
@@ -48,26 +48,26 @@
                 loader.classList.add('hidden');
 
                 if (data.length === 0) {
-                    gallery.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">গ্যালারি খালি। একটি ছবি আপলোড করুন!</p>';
+                    gallery.innerHTML = '<p class="col-span-full text-center text-slate-400 py-10">গ্যালারি খালি। একটি ছবি আপলোড করুন!</p>';
                     return;
                 }
 
                 data.forEach(file => {
                     const card = document.createElement('div');
-                    card.className = "bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300";
+                    card.className = "bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-100 hover:shadow-2xl transition duration-500 group";
                     
-                    // গুগল ড্রাইভের লিঙ্ক প্রিভিউ করার জন্য thumbnail URL তৈরি
-                    const previewUrl = `https://lh3.googleusercontent.com/u/0/d/${file.id}`;
+                    // এটি গুগল ড্রাইভের ছবি দেখানোর সবথেকে কার্যকরী লিঙ্ক
+                    const imageUrl = `https://lh3.googleusercontent.com/u/0/d/${file.id}`;
                     
                     card.innerHTML = `
-                        <div class="h-44 bg-gray-100 overflow-hidden">
-                            <img src="${previewUrl}" class="w-full h-full object-cover hover:scale-105 transition duration-500" 
-                                 onerror="this.src='https://via.placeholder.com/300x200?text=No+Preview'">
+                        <div class="h-52 bg-slate-100 overflow-hidden relative">
+                            <img src="${imageUrl}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" 
+                                 onerror="this.src='https://via.placeholder.com/400x300?text=Image+Loading...'">
                         </div>
-                        <div class="p-3">
-                            <p class="text-xs font-semibold text-gray-600 truncate mb-3">${file.name}</p>
-                            <a href="${file.url}" target="_blank" class="block w-full bg-slate-800 hover:bg-black text-white text-center py-2 rounded-lg text-xs font-bold transition">
-                                ডাউনলোড / দেখুন
+                        <div class="p-4 bg-white">
+                            <p class="text-xs font-bold text-slate-500 truncate mb-4 uppercase tracking-wider">${file.name}</p>
+                            <a href="https://drive.google.com/uc?export=download&id=${file.id}" target="_blank" class="block w-full bg-slate-800 hover:bg-black text-white text-center py-3 rounded-xl text-sm font-bold transition">
+                                ডাউনলোড করুন
                             </a>
                         </div>
                     `;
@@ -92,7 +92,7 @@
                 .then(res => res.json())
                 .then(res => {
                     status.classList.add('hidden');
-                    if(res.success) { alert("সফলভাবে আপলোড হয়েছে!"); loadGallery(); }
+                    if(res.success) { alert("সফলভাবে ড্রাইভে আপলোড হয়েছে!"); loadGallery(); }
                 });
             };
             reader.readAsDataURL(file);
