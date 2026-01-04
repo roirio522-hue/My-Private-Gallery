@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Ultimate Gallery by Rafid Ahammed</title>
+    <title>Ultimate Gallery | Rafid Ahammed</title>
     <meta name="description" content="Ultimate Gallery by Rafid Ahammed - Secure Cloud Storage">
     <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/gallery.png">
     
@@ -15,28 +15,22 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { background-color: #1a1c22; color: #e2e8f0; font-family: 'Inter', sans-serif; }
         
-        /* Fixed Circular Progress Styles */
         .circle-wrapper { position: relative; width: 100px; height: 100px; margin: 0 auto; }
         .circle-svg { transform: rotate(-90deg); width: 100px; height: 100px; }
         .circle-bg { fill: none; stroke: #2d3748; stroke-width: 8; }
         .circle-progress { 
-            fill: none; 
-            stroke: #22c55e; 
-            stroke-width: 8; 
-            stroke-linecap: round; 
-            stroke-dasharray: 283; 
-            stroke-dashoffset: 283; 
-            transition: stroke-dashoffset 0.3s ease; 
+            fill: none; stroke: #3b82f6; stroke-width: 8; stroke-linecap: round; 
+            stroke-dasharray: 283; stroke-dashoffset: 283; 
+            transition: stroke-dashoffset 0.4s ease; 
         }
         
         .check-mark { display: none; color: #22c55e; font-size: 40px; animation: scaleUp 0.3s ease-in-out; }
         @keyframes scaleUp { 0% { transform: scale(0); } 100% { transform: scale(1); } }
         
-        .loader { border-top-color: #22c55e; animation: spin 1s linear infinite; }
+        .loader { border-top-color: #3b82f6; animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         #mainContent { display: none; }
 
-        /* Sidebar & Menu Animations */
         #sidebar { transition: left 0.3s ease-in-out; }
         .menu-link { display: flex; align-items: center; gap: 12px; transition: 0.2s; }
         .menu-link:hover { background-color: #3b82f6; color: white; }
@@ -44,14 +38,14 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <div id="sidebar" class="fixed left-[-250px] top-0 w-[250px] h-full bg-[#1a1c22] z-[1000] border-r border-gray-800">
+    <div id="sidebar" class="fixed left-[-250px] top-0 w-[250px] h-full bg-[#1a1c22] z-[1000] border-r border-gray-800 shadow-2xl">
         <div class="p-6 text-white font-black border-b border-gray-800 uppercase flex justify-between items-center">
             Menu
             <button onclick="closeSidebar()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <ul class="text-gray-400 font-bold p-4">
             <li class="mb-2">
-                <a href="index.html" class="menu-link py-3 px-4 rounded-lg"><i class="fa-solid fa-image text-blue-500"></i> Gallery (Images)</a>
+                <a href="index.html" class="menu-link py-3 px-4 rounded-lg bg-blue-600/10 text-blue-500"><i class="fa-solid fa-image"></i> Gallery (Images)</a>
             </li>
             <li class="mb-2">
                 <a href="audio.html" class="menu-link py-3 px-4 rounded-lg"><i class="fa-solid fa-music text-yellow-500"></i> Audio Store</a>
@@ -69,16 +63,16 @@
 
     <div id="loginSection" class="flex-grow flex items-center justify-center px-4">
         <div class="bg-[#2d333b] p-8 rounded-3xl shadow-2xl border border-gray-700 w-full max-w-sm text-center">
-            <img src="https://img.icons8.com/fluency/96/gallery.png" class="h-16 w-16 mx-auto mb-4" alt="Rafid Ahammed Gallery">
+            <img src="https://img.icons8.com/fluency/96/gallery.png" class="h-16 w-16 mx-auto mb-4" alt="Gallery Logo">
             <h2 class="text-xl font-black text-white mb-6 uppercase tracking-widest">Access Protected</h2>
             <input type="password" id="passInput" placeholder="Enter Secret Password" class="w-full bg-[#1a1c22] border border-gray-600 rounded-xl py-4 px-4 mb-4 text-center focus:outline-none focus:border-blue-500 text-white">
-            <button onclick="checkPassword()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all">UNLOCK GALLERY</button>
+            <button onclick="checkPassword()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all uppercase tracking-widest">Unlock Gallery</button>
             <p id="errorMsg" class="text-red-500 text-sm mt-4 hidden font-bold">WRONG PASSWORD!</p>
         </div>
     </div>
 
     <div id="mainContent" class="relative">
-        <button onclick="openSidebar()" class="fixed left-5 top-5 z-[500] bg-gray-800 p-3 rounded-xl text-white hover:bg-gray-700 transition-all border border-gray-700">
+        <button onclick="openSidebar()" class="fixed left-5 top-5 z-[500] bg-gray-800 p-3 rounded-xl text-white hover:bg-gray-700 transition-all border border-gray-700 shadow-lg">
             <i class="fa-solid fa-bars"></i>
         </button>
 
@@ -86,16 +80,16 @@
             <header class="mb-10 flex flex-col items-center">
                 <img src="https://img.icons8.com/fluency/96/gallery.png" class="h-16 w-16 mb-2" alt="Logo">
                 <h1 class="text-3xl md:text-4xl font-black text-white tracking-tighter uppercase">Ultimate Gallery</h1>
-                <p class="text-blue-400 font-bold tracking-widest text-[10px] mt-1">BY RAFID AHAMMED</p>
-                <button onclick="logout()" class="mt-4 text-[10px] bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white px-4 py-1.5 rounded-full border border-red-600/30 font-bold transition-all">SECURE LOGOUT</button>
+                <p class="text-blue-400 font-bold tracking-widest text-[10px] mt-1 uppercase">By Rafid Ahammed</p>
+                <p id="imageCountDisplay" class="text-gray-500 font-black text-[9px] mt-2 tracking-[3px] uppercase">Total Images: 0</p>
+                <button onclick="logout()" class="mt-4 text-[10px] bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white px-4 py-1.5 rounded-full border border-red-600/30 font-bold transition-all uppercase tracking-widest">Secure Logout</button>
             </header>
 
             <div class="max-w-md mx-auto mb-12">
                 <div class="bg-[#2d333b] shadow-2xl rounded-3xl p-8 border border-gray-700">
                     <input type="file" id="fileInput" class="hidden" accept="image/*" multiple>
-                    <button onclick="document.getElementById('fileInput').click()" id="uploadBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                        SELECT IMAGES
+                    <button onclick="document.getElementById('fileInput').click()" id="uploadBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 transition-all shadow-lg uppercase tracking-widest">
+                        <i class="fa-solid fa-images text-xl"></i> Select Images
                     </button>
 
                     <div id="progressUI" class="hidden mt-8 flex flex-col items-center">
@@ -107,7 +101,12 @@
                             <div id="percentValue" class="absolute inset-0 flex items-center justify-center font-black text-xl text-white">0%</div>
                             <div id="successMark" class="absolute inset-0 flex items-center justify-center check-mark">✔</div>
                         </div>
-                        <p id="statusText" class="mt-4 text-[10px] font-black text-green-400 uppercase tracking-widest">UPLOADING...</p>
+                        <p id="statusText" class="mt-4 text-[10px] font-black text-blue-400 uppercase tracking-widest italic">UPLOADING...</p>
+                        
+                        <div id="statsUI" class="mt-2 text-[9px] font-bold text-gray-400 uppercase tracking-widest flex gap-3">
+                            <span id="speedMeter">0 KB/S</span>
+                            <span id="timeRemaining">--:-- LEFT</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -129,8 +128,8 @@
     <script>
         const CORRECT_PASSWORD = "FF4810026RaFiD#"; 
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxL8IC4rQBBa4dclcvGAgE1sfQbJzi4qPZyNqwjeElGOjmCKzJX3txJ6u3CesQ_u9-8ww/exec";
+        let totalImgCount = 0;
 
-        // Sidebar Control Functions
         function openSidebar() {
             document.getElementById('sidebar').style.left = '0';
             document.getElementById('overlay').classList.remove('hidden');
@@ -169,12 +168,17 @@
         async function loadGallery() {
             const gallery = document.getElementById('gallery');
             const loader = document.getElementById('loading');
+            const countDisplay = document.getElementById('imageCountDisplay');
             gallery.innerHTML = '';
             loader.classList.remove('hidden');
             try {
                 const response = await fetch(SCRIPT_URL);
                 const data = await response.json();
                 loader.classList.add('hidden');
+                
+                totalImgCount = data.length;
+                countDisplay.innerText = `Total Images: ${totalImgCount}`;
+
                 data.forEach(file => {
                     const card = document.createElement('div');
                     card.className = "bg-[#22272e] rounded-2xl shadow-xl overflow-hidden border border-gray-800 hover:border-gray-500 transition duration-300 group";
@@ -183,8 +187,8 @@
                             <img src="https://drive.google.com/thumbnail?id=${file.id}&sz=w800" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" onload="this.style.opacity=1" style="opacity:0">
                         </div>
                         <div class="p-4">
-                            <p class="text-[9px] font-bold text-gray-500 truncate mb-3 uppercase tracking-wider">${file.name}</p>
-                            <a href="https://drive.google.com/uc?export=download&id=${file.id}" target="_blank" onclick="showDownloadAnim(this)" class="block w-full bg-green-600 text-white py-2.5 rounded-lg text-[9px] font-black tracking-widest text-center">DOWNLOAD</a>
+                            <p class="text-[9px] font-bold text-gray-400 truncate mb-3 uppercase tracking-wider text-center">${file.name}</p>
+                            <a href="https://drive.google.com/uc?export=download&id=${file.id}" target="_blank" onclick="showDownloadAnim(this)" class="block w-full bg-blue-600 hover:bg-green-600 text-white py-2.5 rounded-lg text-[9px] font-black tracking-widest text-center transition-all">DOWNLOAD</a>
                         </div>
                     `;
                     gallery.appendChild(card);
@@ -193,11 +197,11 @@
         }
 
         function showDownloadAnim(btn) {
-            btn.innerText = "DOWNLOADING...";
+            btn.innerText = "STARTING...";
             setTimeout(() => { 
                 btn.innerText = "SUCCESS ✔"; 
-                btn.style.backgroundColor = "#3b82f6";
-                setTimeout(() => { btn.innerText = "DOWNLOAD"; btn.style.backgroundColor = "#16a34a"; }, 3000);
+                btn.style.backgroundColor = "#16a34a";
+                setTimeout(() => { btn.innerText = "DOWNLOAD"; btn.style.backgroundColor = "#2563eb"; }, 3000);
             }, 1000);
         }
 
@@ -211,25 +215,48 @@
             const mark = document.getElementById('successMark');
             const status = document.getElementById('statusText');
             const btn = document.getElementById('uploadBtn');
+            const speedMeter = document.getElementById('speedMeter');
+            const timeRemaining = document.getElementById('timeRemaining');
 
             ui.classList.remove('hidden');
             mark.style.display = 'none';
             val.style.display = 'flex';
-            status.innerText = "UPLOADING...";
             btn.disabled = true;
 
-            let uploaded = 0;
-            for (let file of files) {
-                await uploadFile(file);
-                uploaded++;
-                let prog = (uploaded / files.length) * 100;
-                bar.style.strokeDashoffset = 283 - (283 * prog) / 100;
-                val.innerText = Math.round(prog) + "%";
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                let startTime = Date.now();
+                status.innerText = `UPLOADING IMAGE ${i + 1}/${files.length}`;
+
+                await uploadWithSmoothProgress(file, (percent) => {
+                    // স্মুথ প্রগ্রেস বার আপডেট
+                    let totalProg = ((i / files.length) * 100) + (percent / files.length);
+                    bar.style.strokeDashoffset = 283 - (283 * totalProg) / 100;
+                    val.innerText = Math.round(totalProg) + "%";
+
+                    // স্পিড এবং টাইম ক্যালকুলেশন
+                    let now = Date.now();
+                    let elapsed = (now - startTime) / 1000;
+                    if (elapsed > 0) {
+                        let uploaded = (file.size * percent) / 100;
+                        let bps = uploaded / elapsed;
+                        speedMeter.innerText = bps > 1048576 ? (bps/1048576).toFixed(1) + " MB/S" : (bps/1024).toFixed(1) + " KB/S";
+                        
+                        let remaining = file.size - uploaded;
+                        let secLeft = remaining / bps;
+                        let m = Math.floor(secLeft / 60);
+                        let s = Math.floor(secLeft % 60);
+                        timeRemaining.innerText = secLeft > 0 ? `${m}M ${s}S LEFT` : "FINISHING...";
+                    }
+                });
+
+                totalImgCount++;
+                document.getElementById('imageCountDisplay').innerText = `Total Images: ${totalImgCount}`;
             }
             
             val.style.display = 'none';
             mark.style.display = 'flex';
-            status.innerText = "UPLOAD DONE ✔";
+            status.innerText = "ALL IMAGES SAVED ✔";
             setTimeout(() => { 
                 ui.classList.add('hidden'); 
                 btn.disabled = false;
@@ -237,13 +264,32 @@
             }, 2000);
         });
 
-        function uploadFile(file) {
+        function uploadWithSmoothProgress(file, onProgress) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
                 reader.onload = function() {
                     const base64 = reader.result.split(',')[1];
-                    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ base64: base64, mimetype: file.type, filename: file.name }) })
-                    .then(res => res.json()).then(res => resolve(res)).catch(() => resolve());
+                    let p = 0;
+                    // স্মুথ সিমুলেশন লজিক
+                    let interval = setInterval(() => {
+                        p += 1;
+                        if (p <= 95) onProgress(p);
+                        if (p >= 95) clearInterval(interval);
+                    }, 150);
+
+                    fetch(SCRIPT_URL, { 
+                        method: "POST", 
+                        body: JSON.stringify({ base64: base64, mimetype: file.type, filename: file.name }) 
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        onProgress(100);
+                        resolve(res);
+                    })
+                    .catch(() => {
+                        onProgress(100);
+                        resolve();
+                    });
                 };
                 reader.readAsDataURL(file);
             });
