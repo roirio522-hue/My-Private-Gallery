@@ -82,7 +82,6 @@
     </div>
 
     <script>
-        // আপনার ভিডিওর জন্য তৈরি করা নতুন Apps Script URL এখানে বসানো হয়েছে
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxT5U82y3J6TSgCpNzw_CwRCnA3osqYbn49ae0j5GAwMQboxDRHMBnXyXj-zzY9dqAY/exec";
 
         window.onload = function() {
@@ -106,9 +105,12 @@
                 data.forEach(file => {
                     const card = document.createElement('div');
                     card.className = "video-card group";
+                    // এখানে থাম্বনেইল লিঙ্কটি সংশোধন করা হয়েছে
                     card.innerHTML = `
-                        <div class="h-40 md:h-48 bg-black relative overflow-hidden">
-                            <img src="https://drive.google.com/thumbnail?id=${file.id}&sz=w800" class="w-full h-full object-cover group-hover:scale-110 transition duration-500 opacity-60">
+                        <div class="h-40 md:h-48 bg-black relative overflow-hidden flex items-center justify-center">
+                            <img src="https://lh3.googleusercontent.com/u/0/d/${file.id}=w400-h400-p-k-nu" 
+                                 class="w-full h-full object-cover group-hover:scale-110 transition duration-500 opacity-60"
+                                 onerror="this.src='https://img.icons8.com/fluency/96/video.png'; this.className='h-16 w-16 opacity-30';">
                             <div class="absolute inset-0 flex items-center justify-center">
                                 <i class="fa-solid fa-circle-play text-white/80 text-5xl group-hover:text-red-500 transition-colors"></i>
                             </div>
