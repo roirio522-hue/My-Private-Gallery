@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +15,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { background-color: #1a1c22; color: #e2e8f0; font-family: 'Inter', sans-serif; }
         
-        /* Circular Progress Styles */
         .circle-wrapper { position: relative; width: 100px; height: 100px; margin: 0 auto; }
         .circle-svg { transform: rotate(-90deg); width: 100px; height: 100px; }
         .circle-bg { fill: none; stroke: #2d3748; stroke-width: 8; }
@@ -26,10 +26,13 @@
         .loader { border-top-color: #ef4444; animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* Video Card Styles */
-        .video-card { background: #22272e; border: 1px solid #2d333b; border-radius: 20px; transition: 0.3s; overflow: hidden; }
+        .video-card { background: #22272e; border: 1px solid #2d333b; border-radius: 20px; transition: 0.3s; overflow: hidden; cursor: pointer; }
         .video-card:hover { border-color: #ef4444; transform: translateY(-5px); }
         
+        /* Popup Styles */
+        #videoPopup { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; align-items: center; justify-content: center; padding: 15px; }
+        .popup-box { background: #1a1c22; width: 100%; max-width: 700px; border-radius: 24px; border: 1px solid #334155; overflow: hidden; }
+
         #mainContent { display: none; }
     </style>
 </head>
@@ -37,7 +40,6 @@
 
     <div id="mainContent">
         <div class="max-w-6xl mx-auto px-4 py-10 w-full text-center relative">
-            
             <a href="index.html" class="fixed left-5 top-5 bg-gray-800 p-3 rounded-xl text-white hover:bg-gray-700 transition-all border border-gray-700">
                 <i class="fa-solid fa-arrow-left mr-2"></i> BACK
             </a>
@@ -69,16 +71,27 @@
             </div>
 
             <div id="gallery" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8"></div>
-            
-            <div id="loading" class="py-20">
-                <div class="inline-block loader rounded-full border-4 border-gray-700 h-10 w-10 mb-4"></div>
-                <p class="text-gray-500 font-bold tracking-widest uppercase text-[9px]">Fetching Video Data...</p>
-            </div>
+            <div id="loading" class="py-20"><div class="inline-block loader rounded-full border-4 border-gray-700 h-10 w-10"></div></div>
         </div>
 
         <footer class="py-10 text-center border-t border-gray-800 bg-[#161b22] mt-auto">
-            <p class="text-gray-400 font-bold text-[10px] tracking-widest uppercase mb-1">© 2026 Ultimate Video Store | Rafid Ahammed</p>
+            <p class="text-gray-400 font-bold text-[10px] tracking-widest uppercase">© 2026 Ultimate Video Store | Rafid Ahammed</p>
         </footer>
+    </div>
+
+    <div id="videoPopup">
+        <div class="popup-box relative">
+            <button onclick="closePopup()" class="absolute top-3 right-4 text-white text-2xl z-50"><i class="fa-solid fa-xmark"></i></button>
+            <div class="aspect-video bg-black">
+                <iframe id="player" class="w-full h-full" src="" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div class="p-6 text-center">
+                <p id="videoTitle" class="text-gray-400 text-[10px] font-bold uppercase mb-4 truncate"></p>
+                <a id="dlBtn" href="#" target="_blank" class="block w-full bg-red-600 hover:bg-red-700 text-white py-4 rounded-xl font-black text-[12px] tracking-[3px] uppercase transition-all">
+                    DOWNLOAD DOWNLOAD DOWNLOAD
+                </a>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -88,9 +101,7 @@
             if (localStorage.getItem('gallery_access') === 'true') {
                 document.getElementById('mainContent').style.display = 'block';
                 loadVideos();
-            } else {
-                window.location.href = "index.html";
-            }
+            } else { window.location.href = "index.html"; }
         };
 
         async function loadVideos() {
@@ -105,19 +116,14 @@
                 data.forEach(file => {
                     const card = document.createElement('div');
                     card.className = "video-card group";
-                    // এখানে থাম্বনেইল লিঙ্কটি সংশোধন করা হয়েছে
+                    card.onclick = () => openPopup(file.id, file.name);
                     card.innerHTML = `
                         <div class="h-40 md:h-48 bg-black relative overflow-hidden flex items-center justify-center">
-                            <img src="https://lh3.googleusercontent.com/u/0/d/${file.id}=w400-h400-p-k-nu" 
-                                 class="w-full h-full object-cover group-hover:scale-110 transition duration-500 opacity-60"
-                                 onerror="this.src='https://img.icons8.com/fluency/96/video.png'; this.className='h-16 w-16 opacity-30';">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <i class="fa-solid fa-circle-play text-white/80 text-5xl group-hover:text-red-500 transition-colors"></i>
-                            </div>
+                            <img src="https://lh3.googleusercontent.com/u/0/d/${file.id}" class="w-full h-full object-cover opacity-60">
+                            <i class="fa-solid fa-circle-play text-white/80 text-5xl absolute group-hover:text-red-500 transition-colors"></i>
                         </div>
                         <div class="p-4 bg-[#22272e]">
-                            <p class="text-[9px] font-bold text-gray-400 truncate mb-3 uppercase tracking-wider">${file.name}</p>
-                            <a href="https://drive.google.com/uc?export=download&id=${file.id}" target="_blank" onclick="showDownloadAnim(this)" class="block w-full bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-lg text-[9px] font-black tracking-widest text-center transition-all">DOWNLOAD VIDEO</a>
+                            <p class="text-[9px] font-bold text-gray-400 truncate uppercase tracking-wider">${file.name}</p>
                         </div>
                     `;
                     gallery.appendChild(card);
@@ -125,28 +131,27 @@
             } catch (error) { loader.classList.add('hidden'); }
         }
 
-        function showDownloadAnim(btn) {
-            btn.innerText = "PROCESSING...";
-            setTimeout(() => { 
-                btn.innerText = "READY ✔"; 
-                btn.style.backgroundColor = "#2563eb";
-                setTimeout(() => { btn.innerText = "DOWNLOAD VIDEO"; btn.style.backgroundColor = "#dc2626"; }, 3000);
-            }, 1000);
+        function openPopup(id, name) {
+            document.getElementById('player').src = `https://drive.google.com/file/d/${id}/preview`;
+            document.getElementById('dlBtn').href = `https://drive.google.com/uc?export=download&id=${id}`;
+            document.getElementById('videoTitle').innerText = name;
+            document.getElementById('videoPopup').style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('player').src = "";
+            document.getElementById('videoPopup').style.display = 'none';
         }
 
         document.getElementById('fileInput').addEventListener('change', async function(e) {
             const files = Array.from(e.target.files);
             if (files.length === 0) return;
-            
             const ui = document.getElementById('progressUI');
             const bar = document.getElementById('circleBar');
             const val = document.getElementById('percentValue');
             const status = document.getElementById('statusText');
             const btn = document.getElementById('uploadBtn');
-
-            ui.classList.remove('hidden');
-            btn.disabled = true;
-
+            ui.classList.remove('hidden'); btn.disabled = true;
             let uploaded = 0;
             for (let file of files) {
                 await uploadFile(file);
@@ -155,13 +160,8 @@
                 bar.style.strokeDashoffset = 283 - (283 * prog) / 100;
                 val.innerText = Math.round(prog) + "%";
             }
-            
             status.innerText = "UPLOAD FINISHED ✔";
-            setTimeout(() => { 
-                ui.classList.add('hidden'); 
-                btn.disabled = false;
-                loadVideos(); 
-            }, 2000);
+            setTimeout(() => { ui.classList.add('hidden'); btn.disabled = false; loadVideos(); }, 2000);
         });
 
         function uploadFile(file) {
@@ -178,4 +178,3 @@
     </script>
 </body>
 </html>
-
