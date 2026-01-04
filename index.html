@@ -38,10 +38,44 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <div id="sidebar" class="fixed left-[-250px] top-0 w-[250px] h-full bg-[#1a1c22] z-[1000] border-r border-gray-800 shadow-2xl">
+    <div id="sidebar" class="fixed left-[-250px] top-0 w-[250px] h-full bg-[#1a1c22] z-[1000] border-r border-gray-800 shadow-2xl overflow-y-auto">
         <div class="p-6 text-white font-black border-b border-gray-800 uppercase flex justify-between items-center">
             Menu
             <button onclick="closeSidebar()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        
+        <div class="p-5 border-b border-gray-800">
+            <div class="flex justify-between items-center mb-2">
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Cloud Storage</p>
+                <p id="storagePercentText" class="text-[10px] font-black text-blue-500">0%</p>
+            </div>
+            <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden mb-3">
+                <div id="storageBar" class="bg-blue-600 h-full transition-all duration-1000" style="width: 0%"></div>
+            </div>
+            <p id="storageSummary" class="text-[9px] text-gray-500 font-bold uppercase tracking-wider mb-4">0 GB Used of 15 GB</p>
+            
+            <button onclick="toggleStorageDetails()" class="w-full py-2 bg-gray-800/50 hover:bg-gray-800 rounded-lg text-[8px] font-black text-blue-400 uppercase tracking-[2px] border border-gray-700 transition-all">
+                View Details <i id="detailIcon" class="fa-solid fa-chevron-down ml-1"></i>
+            </button>
+
+            <div id="storageDetails" class="hidden mt-4 space-y-3 pt-3 border-t border-gray-800">
+                <div class="flex justify-between text-[8px] font-bold uppercase">
+                    <span class="text-blue-400">Images</span>
+                    <span id="imgSizeDisp">0 MB</span>
+                </div>
+                <div class="flex justify-between text-[8px] font-bold uppercase">
+                    <span class="text-red-500">Videos</span>
+                    <span id="vidSizeDisp">0 MB</span>
+                </div>
+                <div class="flex justify-between text-[8px] font-bold uppercase">
+                    <span class="text-yellow-500">Audio</span>
+                    <span id="audSizeDisp">0 MB</span>
+                </div>
+                <div class="flex justify-between text-[8px] font-bold uppercase">
+                    <span class="text-green-500">Files</span>
+                    <span id="docSizeDisp">0 MB</span>
+                </div>
+            </div>
         </div>
         <ul class="text-gray-400 font-bold p-4">
             <li class="mb-2">
@@ -62,7 +96,7 @@
     <div id="overlay" onclick="closeSidebar()" class="fixed inset-0 bg-black/60 hidden z-[999]"></div>
 
     <div id="loginSection" class="flex-grow flex items-center justify-center px-4">
-        <div class="bg-[#2d333b] p-8 rounded-3xl shadow-2xl border border-gray-700 w-full max-w-sm text-center">
+        <div class="bg-[#2d333b] p-8 rounded-3xl shadow-2xl border border-gray-700 w-full max-sm text-center">
             <img src="https://img.icons8.com/fluency/96/gallery.png" class="h-16 w-16 mx-auto mb-4" alt="Gallery Logo">
             <h2 class="text-xl font-black text-white mb-6 uppercase tracking-widest">Access Protected</h2>
             <input type="password" id="passInput" placeholder="Enter Secret Password" class="w-full bg-[#1a1c22] border border-gray-600 rounded-xl py-4 px-4 mb-4 text-center focus:outline-none focus:border-blue-500 text-white">
@@ -140,6 +174,14 @@
             document.getElementById('overlay').classList.add('hidden');
         }
 
+        function toggleStorageDetails() {
+            const details = document.getElementById('storageDetails');
+            const icon = document.getElementById('detailIcon');
+            details.classList.toggle('hidden');
+            icon.classList.toggle('fa-chevron-up');
+            icon.classList.toggle('fa-chevron-down');
+        }
+
         function checkPassword() {
             if (document.getElementById('passInput').value === CORRECT_PASSWORD) {
                 localStorage.setItem('gallery_access', 'true');
@@ -179,21 +221,57 @@
                 totalImgCount = data.length;
                 countDisplay.innerText = `Total Images: ${totalImgCount}`;
 
+                // Calculate Storage
+                calculateStorage(data);
+
                 data.forEach(file => {
                     const card = document.createElement('div');
                     card.className = "bg-[#22272e] rounded-2xl shadow-xl overflow-hidden border border-gray-800 hover:border-gray-500 transition duration-300 group";
                     card.innerHTML = `
-                        <div class="h-48 md:h-56 bg-gray-900 overflow-hidden">
+                        <div class="h-48 md:h-56 bg-gray-900 overflow-hidden relative">
                             <img src="https://drive.google.com/thumbnail?id=${file.id}&sz=w800" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" onload="this.style.opacity=1" style="opacity:0">
+                            <span class="absolute top-2 right-2 bg-black/60 backdrop-blur-md text-[8px] text-white px-2 py-1 rounded font-bold uppercase tracking-tighter">
+                                ${file.size || 'N/A'}
+                            </span>
                         </div>
                         <div class="p-4">
-                            <p class="text-[9px] font-bold text-gray-400 truncate mb-3 uppercase tracking-wider text-center">${file.name}</p>
+                            <p class="text-[9px] font-bold text-gray-400 truncate mb-1 uppercase tracking-wider text-center">${file.name}</p>
+                            <p class="text-[8px] text-blue-500 font-black mb-3 text-center uppercase tracking-[2px]">${file.size || ''}</p>
                             <a href="https://drive.google.com/uc?export=download&id=${file.id}" target="_blank" onclick="showDownloadAnim(this)" class="block w-full bg-blue-600 hover:bg-green-600 text-white py-2.5 rounded-lg text-[9px] font-black tracking-widest text-center transition-all">DOWNLOAD</a>
                         </div>
                     `;
                     gallery.appendChild(card);
                 });
             } catch (error) { loader.classList.add('hidden'); }
+        }
+
+        function calculateStorage(data) {
+            const TOTAL_LIMIT = 15 * 1024 * 1024 * 1024; // 15 GB
+            let totalBytes = 0;
+            let imgBytes = 0, vidBytes = 0, audBytes = 0, docBytes = 0;
+
+            data.forEach(file => {
+                let bytes = file.rawSize || 0;
+                totalBytes += bytes;
+
+                let name = file.name.toLowerCase();
+                if (/\.(jpg|jpeg|png|gif|webp)$/.test(name)) imgBytes += bytes;
+                else if (/\.(mp4|mkv|mov|avi|webm)$/.test(name)) vidBytes += bytes;
+                else if (/\.(mp3|wav|ogg|m4a)$/.test(name)) audBytes += bytes;
+                else docBytes += bytes;
+            });
+
+            let usedGB = (totalBytes / (1024**3)).toFixed(2);
+            let percent = ((totalBytes / TOTAL_LIMIT) * 100).toFixed(1);
+
+            document.getElementById('storageBar').style.width = percent + "%";
+            document.getElementById('storagePercentText').innerText = percent + "%";
+            document.getElementById('storageSummary').innerText = `${usedGB} GB Used of 15 GB`;
+
+            document.getElementById('imgSizeDisp').innerText = (imgBytes / (1024**2)).toFixed(1) + " MB";
+            document.getElementById('vidSizeDisp').innerText = (vidBytes / (1024**2)).toFixed(1) + " MB";
+            document.getElementById('audSizeDisp').innerText = (audBytes / (1024**2)).toFixed(1) + " MB";
+            document.getElementById('docSizeDisp').innerText = (docBytes / (1024**2)).toFixed(1) + " MB";
         }
 
         function showDownloadAnim(btn) {
@@ -226,15 +304,13 @@
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 let startTime = Date.now();
-                status.innerText = `UPLOADING IMAGE ${i + 1}/${files.length}`;
+                status.innerText = `UPLOADING ORIGINAL ${i + 1}/${files.length}`;
 
                 await uploadWithSmoothProgress(file, (percent) => {
-                    // স্মুথ প্রগ্রেস বার আপডেট
                     let totalProg = ((i / files.length) * 100) + (percent / files.length);
                     bar.style.strokeDashoffset = 283 - (283 * totalProg) / 100;
                     val.innerText = Math.round(totalProg) + "%";
 
-                    // স্পিড এবং টাইম ক্যালকুলেশন
                     let now = Date.now();
                     let elapsed = (now - startTime) / 1000;
                     if (elapsed > 0) {
@@ -249,14 +325,11 @@
                         timeRemaining.innerText = secLeft > 0 ? `${m}M ${s}S LEFT` : "FINISHING...";
                     }
                 });
-
-                totalImgCount++;
-                document.getElementById('imageCountDisplay').innerText = `Total Images: ${totalImgCount}`;
             }
             
             val.style.display = 'none';
             mark.style.display = 'flex';
-            status.innerText = "ALL IMAGES SAVED ✔";
+            status.innerText = "ALL FILES SAVED ✔";
             setTimeout(() => { 
                 ui.classList.add('hidden'); 
                 btn.disabled = false;
@@ -270,12 +343,11 @@
                 reader.onload = function() {
                     const base64 = reader.result.split(',')[1];
                     let p = 0;
-                    // স্মুথ সিমুলেশন লজিক
                     let interval = setInterval(() => {
                         p += 1;
                         if (p <= 95) onProgress(p);
                         if (p >= 95) clearInterval(interval);
-                    }, 150);
+                    }, 200);
 
                     fetch(SCRIPT_URL, { 
                         method: "POST", 
@@ -287,14 +359,4 @@
                         resolve(res);
                     })
                     .catch(() => {
-                        onProgress(100);
-                        resolve();
-                    });
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-    </script>
-</body>
-</html>
-
+                        onP
