@@ -19,7 +19,8 @@
         .circle-bg { fill: none; stroke: #2d3748; stroke-width: 8; }
         .circle-progress { 
             fill: none; stroke: #eab308; stroke-width: 8; stroke-linecap: round; 
-            stroke-dasharray: 283; stroke-dashoffset: 283; transition: stroke-dashoffset 0.3s ease; 
+            stroke-dasharray: 283; stroke-dashoffset: 283; 
+            transition: stroke-dashoffset 0.4s ease; /* অ্যানিমেশন স্মুথ করার জন্য */
         }
         
         .loader { border-top-color: #eab308; animation: spin 1s linear infinite; }
@@ -80,7 +81,6 @@
     </div>
 
     <script>
-        // আপনার দেওয়া নতুন অডিও Apps Script URL টি এখানে আপডেট করা হয়েছে
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyEKzl3m9K0QYMnDW8uKNCOrBQpuph2z3qN6WYUQYhB6XWiwN5VchN8q__ObjXTEzut/exec";
 
         window.onload = function() {
@@ -140,13 +140,15 @@
             ui.classList.remove('hidden');
             btn.disabled = true;
 
-            let uploaded = 0;
-            for (let file of files) {
-                await uploadFile(file);
-                uploaded++;
-                let prog = (uploaded / files.length) * 100;
-                bar.style.strokeDashoffset = 283 - (283 * prog) / 100;
-                val.innerText = Math.round(prog) + "%";
+            for (let i = 0; i < files.length; i++) {
+                status.innerText = `UPLOADING MP3 ${i + 1}/${files.length}`;
+                
+                // স্মুথ অ্যানিমেশন লজিক
+                await uploadWithProgress(files[i], (percent) => {
+                    let totalProg = ((i / files.length) * 100) + (percent / files.length);
+                    bar.style.strokeDashoffset = 283 - (283 * totalProg) / 100;
+                    val.innerText = Math.round(totalProg) + "%";
+                });
             }
             
             status.innerText = "UPLOAD COMPLETE ✔";
@@ -157,13 +159,33 @@
             }, 2000);
         });
 
-        function uploadFile(file) {
+        function uploadWithProgress(file, onProgress) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
                 reader.onload = function() {
                     const base64 = reader.result.split(',')[1];
-                    fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ base64: base64, mimetype: file.type, filename: file.name }) })
-                    .then(res => res.json()).then(res => resolve(res)).catch(() => resolve());
+                    
+                    // সার্ভার রেসপন্সের আগে স্মুথ প্রগ্রেস সিমুলেশন
+                    let p = 0;
+                    let interval = setInterval(() => {
+                        p += 2;
+                        if (p <= 90) onProgress(p);
+                        if (p >= 90) clearInterval(interval);
+                    }, 50);
+
+                    fetch(SCRIPT_URL, { 
+                        method: "POST", 
+                        body: JSON.stringify({ base64: base64, mimetype: file.type, filename: file.name }) 
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        onProgress(100);
+                        resolve(res);
+                    })
+                    .catch(() => {
+                        onProgress(100);
+                        resolve();
+                    });
                 };
                 reader.readAsDataURL(file);
             });
